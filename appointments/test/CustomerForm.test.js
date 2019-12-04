@@ -10,6 +10,8 @@ describe("CustomweForm", () => {
   });
 
   const form = id => container.querySelector(`form[id="${id}"]`);
+  const labelFor = formElement =>
+    container.querySelector(`label[for="${formElement}"]`);
 
   const expectToBeInputFieldOfTypeText = formElement => {
     expect(formElement).not.toBeNull();
@@ -44,5 +46,21 @@ describe("CustomweForm", () => {
   it("renders as  a text box", () => {
     render(<CustomerForm />);
     expectToBeInputFieldOfTypeText(firstNameField());
+  });
+
+  it("renders a label for the first name field", () => {
+    render(<CustomerForm />);
+    expect(labelFor("firstName")).not.toBeNull();
+    expect(labelFor("firstName").textContent).toEqual("First Name");
+  });
+
+  it("assigns an id that matches the label id to the first name field", () => {
+    render(<CustomerForm />);
+    expect(firstNameField().id).toEqual("firstName");
+  });
+
+  it.skip ("renders a label for the first name field-2", ()=> {
+    render();
+    expect(labelFor("firstName").textContent).toEqual("First Name");
   });
 });
