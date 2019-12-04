@@ -17,6 +17,8 @@ describe("CustomweForm", () => {
     expect(formElement.type).toEqual("text");
   };
 
+  const firstNameField = () => form("customer").elements.firstName;
+
   it("renders a form", () => {
     render(<CustomerForm />);
     // expect(container.querySelector('form[id="customer"]')).not.toBeNull();
@@ -30,5 +32,17 @@ describe("CustomweForm", () => {
     // expect(field.tagName).toEqual("INPUT");
     // expect(field.type).toEqual("text");
     expectToBeInputFieldOfTypeText(field);
+  });
+
+  it("renders the existing value for the  first name field", () => {
+    render(<CustomerForm firstName="Ashely"></CustomerForm>);
+    // const field =form('customer').elements.firstName;
+    // expect(field.value).toEqual("Ashely");
+    expect(firstNameField().value).toEqual("Ashely");
+  });
+
+  it("renders as  a text box", () => {
+    render(<CustomerForm />);
+    expectToBeInputFieldOfTypeText(firstNameField());
   });
 });
