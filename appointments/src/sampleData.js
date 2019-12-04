@@ -1,7 +1,8 @@
 const today =new Date();
-const at = ( hours) =>{
+const at =  (hours )=>
     today.setHours( hours ,0);
-};
+
+;
 
 export  const sampleAppointments= [
     { startsAt: at(9) ,customer: {firstName: 'Charlie' } },
