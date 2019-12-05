@@ -11,10 +11,49 @@ describe("AppointmentForm", () => {
   });
   const form = id => container.querySelector(`form[id="${id}"]`);
   const field = name => form("appointment").elements[name];
+  const fieldProgram = name => form("appointment").elements[name];
 
   const findOption = (dropdownNode, textContent) => {
     const options = Array.from(dropdownNode.childNodes);
     return options.find(option => option.textContent === textContent);
+  };
+  const labelFor = formElement =>
+    container.querySelector(`label[for="${formElement}"]`);
+
+  const itRendersALabel = (fieldName, valueName) => {
+    it("renders a label  ", () => {
+      render(<AppointmentForm />);
+      expect(labelFor(fieldName)).not.toBeNull();
+      expect(labelFor(fieldName).textContent).toEqual(valueName);
+    });
+  };
+   
+  const itSubmitsExistingValue = (fieldName, valueName) => {
+    it("saves existing value when submitted", async () => {
+      expect.hasAssertions();
+      render(
+        <AppointmentForm
+          {...{ [fieldName]: valueName }}
+          onSubmit={props => expect(props[fieldName]).toEqual(valueName)}
+        />
+      );
+      await ReactTestUtils.Simulate.submit(form("appointment"));
+    });
+  };
+  const itSubmitsNewValue = (fieldName, valueName) => {
+    it("saves existing new value when submitted", async () => {
+      expect.hasAssertions();
+      render(
+        <AppointmentForm
+          {...{ [fieldName]: valueName }}
+          onSubmit={props => expect(props[fieldName]).toEqual(valueName)}
+        />
+      );
+      await ReactTestUtils.Simulate.change(fieldProgram(fieldName), {
+        target: { value: valueName, name: fieldName }
+      });
+      await ReactTestUtils.Simulate.submit(form("appointment"));
+    });
   };
 
   it("it renders a form", () => {
@@ -67,5 +106,8 @@ describe("AppointmentForm", () => {
       const option = findOption(field("service"), "Blow-dry");
       expect(option.selected).toBeTruthy();
     });
+    itRendersALabel("service" ,"Service");
+    itSubmitsExistingValue("service" ,"Blow-dry");
+    itSubmitsNewValue("service" ,"Cut");
   });
 });
