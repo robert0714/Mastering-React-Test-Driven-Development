@@ -74,7 +74,7 @@ describe("CustomweForm", () => {
         />
       );
       await ReactTestUtils.Simulate.change(fieldProgram(fieldName), {
-        target: { value: valueName }
+        target: { value: valueName, name: fieldName }
       });
       await ReactTestUtils.Simulate.submit(form("customer"));
     });
@@ -94,6 +94,7 @@ describe("CustomweForm", () => {
     // expect(field.type).toEqual("text");
     expectToBeInputFieldOfTypeText(field);
   });
+
   describe("first name field", () => {
     itRendersAsATextBox("firstName");
     itIncludesTheExistingValue("firstName");
@@ -101,8 +102,6 @@ describe("CustomweForm", () => {
     assignsAnIdThatMatchesTheLabelId("firstName");
     itSubmitsExistingValue("firstName", "Ashley");
     itSubmitsNewValue("firstName", "Ashley");
-
-     
   });
   describe("last name field", () => {
     itRendersAsATextBox("lastName");
@@ -119,5 +118,12 @@ describe("CustomweForm", () => {
     assignsAnIdThatMatchesTheLabelId("phoneNumber");
     itSubmitsExistingValue("phoneNumber", "012345");
     itSubmitsNewValue("phoneNumber", "012345");
+  });
+
+  it("has a submit button", () => {
+    render(<CustomerForm />);
+    const btn = container.querySelector("INPUT[type='submit']");
+    expect(btn).not.toBeNull();
+    // expect(container.querySelector('form[id="customer"]')).not.toBeNull();
   });
 });
