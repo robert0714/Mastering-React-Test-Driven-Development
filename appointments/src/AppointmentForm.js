@@ -30,7 +30,7 @@ export const AppointmentForm = ({
   const weeklyDateValues = startDate => {
     const midnight = new Date(startDate).setHours(0, 0, 0,0);
     const increment = 24 * 60 * 60 * 1000;
-    const result = Array(8)
+    const result = Array(7)
       .fill([midnight])
       .reduce((acc, _, i) => acc.concat([midnight + i * increment]));
     return result;
@@ -47,6 +47,7 @@ export const AppointmentForm = ({
       <table name="time-slots" id="time-slots">
         <thead>
           <tr>
+            <th/>
             {dates.map(date => (
               <th key={date}>{toShortDate(date)}</th>
             ))}
