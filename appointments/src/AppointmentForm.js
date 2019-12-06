@@ -125,8 +125,7 @@ const RadioButtonIfAvailable = ({
         {selectableServices.map(s => (
           <option key={s}>{s}</option>
         ))}
-      </select>
-      <input type="submit" value="Add" />
+      </select>     
       <TimeSlotTable
         salonOpensAt={salonOpensAt}
         salonClosesAt={salonClosesAt}
@@ -135,6 +134,7 @@ const RadioButtonIfAvailable = ({
         checkedTimeSlot={appointment.startsAt}
         handleChange={handleStartsAtChange}
       />
+      <input type="submit" value="Add" />
     </form>
   );
 };
