@@ -58,6 +58,9 @@ export const AppointmentForm = ({
           {timeSlots.map(timeSlot => (
             <tr key={timeSlot}>
               <th>{toTimeValue(timeSlot)}</th>
+              {dates.map(date => (
+              <td key={date}> <input type="radio" />   </td>
+            ))}
             </tr>
           ))}
         </tbody>
