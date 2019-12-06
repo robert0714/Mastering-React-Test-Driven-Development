@@ -17,22 +17,23 @@ export const AppointmentForm = ({
   };
   const toTimeValue = timestamp =>
     new Date(timestamp).toTimeString().substring(0, 5);
-
+  const timeIcrement =(numberTimes , startTime , increment) => {
+    const result = Array(numberTimes)
+      .fill([startTime])
+      .reduce((acc, _, i) => acc.concat([startTime + i * increment]));
+    return result;
+  };
   const dailyTimeSlots = (salonOpensAt, salonClosesAt) => {
     const totalSlots = (salonClosesAt - salonOpensAt) * 2;
     const startTime = new Date().setHours(salonOpensAt, 0, 0, 0);
     const increment = 30 * 60 * 1000;
-    const result = Array(totalSlots)
-      .fill([startTime])
-      .reduce((acc, _, i) => acc.concat([startTime + i * increment]));
+    const result = timeIcrement(totalSlots, startTime , increment) ;
     return result;
   };
   const weeklyDateValues = startDate => {
     const midnight = new Date(startDate).setHours(0, 0, 0,0);
     const increment = 24 * 60 * 60 * 1000;
-    const result = Array(7)
-      .fill([midnight])
-      .reduce((acc, _, i) => acc.concat([midnight + i * increment]));
+    const result = timeIcrement(7, midnight , increment) ;
     return result;
   };
   const toShortDate = timestamp => {
