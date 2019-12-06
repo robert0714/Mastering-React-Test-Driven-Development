@@ -15,3 +15,33 @@ export  const sampleAppointments= [
     { startsAt: at(16) ,customer: {firstName: 'Jules' } },
     { startsAt: at(17) ,customer: {firstName: 'Stevie' } } 
 ];
+
+//add array object's method
+Array.prototype.pickRandom = function() {
+    return this[Math.floor(Math.random() * this.length)];
+  };
+
+const pickMany = (items, number) =>
+  Array(number)
+    .fill(1)
+    .map(() => items.pickRandom());
+
+const buildTimeSlots = () => {
+  const today = new Date();
+  const startTime = today.setHours(9, 0, 0, 0);
+  const times = [...Array(7).keys()].map(day => {
+    const daysToAdd = day * 24 * 60 * 60 * 1000;
+    return [...Array(20).keys()].map(halfHour => {
+      const halfHoursToAdd = halfHour * 30 * 60 * 1000;
+      return {
+        startsAt: startTime + daysToAdd + halfHoursToAdd
+      };
+    });
+  });
+  return [].concat(...times);
+};
+
+export const sampleAvailableTimeSlots = pickMany(
+  buildTimeSlots(),
+  50
+);
