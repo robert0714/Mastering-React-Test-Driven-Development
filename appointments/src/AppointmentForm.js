@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useCallback } from "react";
 
 export const AppointmentForm = ({
   selectableServices,
@@ -46,15 +46,38 @@ export const AppointmentForm = ({
     setHours(time.getHours(),time.getMinutes(),time.getSeconds(),time.getSeconds());
     return result;
   }
-  const RadioButtonIfAvailable =({availableTimeSlots,date,timeSlot})=>{
-    const startsAt = mergeDateAndTime(date,timeSlot);
-    if( availableTimeSlots.some(availableTimeSlot => availableTimeSlot.startsAt === startsAt )){
-        return (<input type="radio"  name="startsAt" value={startsAt} />);
-    }else{
-        return null;
-    }
+
+const handleStartsAtChange = useCallback( ( {target : { value }}) =>{
+  setAppointment(appointment => ({
+    ...appointment,
+    startsAt: parseInt(value)  
+  }));
+} );
+
+const RadioButtonIfAvailable = ({
+  availableTimeSlots,
+  date,
+  timeSlot,
+  checkedTimeSlot,
+  handleChange
+}) => {
+  const startsAt = mergeDateAndTime(date, timeSlot);
+  if (availableTimeSlots.some(a => a.startsAt === startsAt)) {
+    const isChecked = startsAt === checkedTimeSlot;
+    return (
+      <input
+        name="startsAt"
+        type="radio"
+        value={startsAt}
+        checked={isChecked}
+        onChange={handleChange}
+      />
+    );
   }
-  const TimeSlotTable = ({ salonOpensAt, salonClosesAt, today ,availableTimeSlots }) => {
+  return null;
+};
+  
+  const TimeSlotTable = ({ salonOpensAt, salonClosesAt, today ,availableTimeSlots, checkedTimeSlot,handleChange }) => {
     const timeSlots = dailyTimeSlots(salonOpensAt, salonClosesAt);
     const dates = weeklyDateValues(today);
     return (
@@ -73,7 +96,13 @@ export const AppointmentForm = ({
               <th>{toTimeValue(timeSlot)}</th>
               {dates.map(date => (
               <td key={date}> 
-                <RadioButtonIfAvailable availableTimeSlots={availableTimeSlots}  date={date}  timeSlot={timeSlot} /> 
+                <RadioButtonIfAvailable 
+                availableTimeSlots={availableTimeSlots}  
+                date={date}  
+                timeSlot={timeSlot} 
+                checkedTimeSlot={appointment.startsAt}
+                handleChange={handleStartsAtChange}
+                /> 
 
               </td>
             ))}
@@ -103,6 +132,8 @@ export const AppointmentForm = ({
         salonClosesAt={salonClosesAt}
         today={today}
         availableTimeSlots ={availableTimeSlots}
+        checkedTimeSlot={appointment.startsAt}
+        handleChange={handleStartsAtChange}
       />
     </form>
   );
