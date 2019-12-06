@@ -21,6 +21,10 @@ describe("AppointmentForm", () => {
   const labelFor = formElement =>
     container.querySelector(`label[for="${formElement}"]`);
 
+  const startsAtField = index => 
+    container.querySelectorAll(`input[name="startsAt"]`)[index];
+
+
   const itRendersALabel = (fieldName, valueName) => {
     it("renders a label  ", () => {
       render(<AppointmentForm />);
@@ -140,13 +144,35 @@ describe("AppointmentForm", () => {
     });
     it('renders a radio button for each time slot',()=>{
       const date = new Date();
-      const availableTimeSlots =[{startAt: date.setHours(9,0,0,0) },{startAt: date.setHours(9,30,0,0)}];
+      const availableTimeSlots =[{startsAt: date.setHours(9,0,0,0) },{startsAt: date.setHours(9,30,0,0)}];
      
       render(<AppointmentForm  today={date} availableTimeSlots ={availableTimeSlots} />);
 
       const cells = timeSlotTable().querySelectorAll('td');
       expect(cells[0].querySelector('input[type="radio"]')).not.toBeNull();
       expect(cells[7].querySelector('input[type="radio"]')).not.toBeNull();
+    });
+    it('does not render a radio button for unavailable time slots',() => {
+      const availableTimeSlots =[];
+     
+      render(<AppointmentForm   availableTimeSlots ={availableTimeSlots} />);
+
+      const timesOfDay = timeSlotTable().querySelectorAll('input');
+      expect(timesOfDay).toHaveLength(0);
+    });
+
+    it ('sets the radio button values to the index of the corresponding appointment',() => {
+      const today = new Date();
+      const availableTimeSlots =[
+        {startsAt: today.setHours(9,0,0,0) },
+        {startsAt: today.setHours(9,30,0,0)}
+      ];
+     
+      render(<AppointmentForm  today={today} availableTimeSlots ={availableTimeSlots} />);
+      const timesOfDay = timeSlotTable().querySelectorAll('input');
+      expect(timesOfDay).toHaveLength(2);
+      expect(startsAtField(0).value).toEqual(availableTimeSlots[0].startsAt.toString());
+      expect(startsAtField(1).value).toEqual(availableTimeSlots[1].startsAt.toString());
     });
   });
 });

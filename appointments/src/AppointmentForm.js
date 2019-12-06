@@ -6,7 +6,7 @@ export const AppointmentForm = ({
   onSubmit,
   salonOpensAt,
   salonClosesAt,
-  today
+  today,availableTimeSlots
 }) => {
   const [appointment, setAppointment] = useState({ service });
   const handleChange = ({ target }) => {
@@ -40,8 +40,21 @@ export const AppointmentForm = ({
     const [day, , dayOfMonth] = new Date(timestamp).toDateString().split(" ");
     return `${day} ${dayOfMonth}`;
   };
-
-  const TimeSlotTable = ({ salonOpensAt, salonClosesAt, today }) => {
+  const mergeDateAndTime = (date , timeSlot) =>{
+    const time =new Date(timeSlot);
+    const result = new Date(date).
+    setHours(time.getHours(),time.getMinutes(),time.getSeconds(),time.getSeconds());
+    return result;
+  }
+  const RadioButtonIfAvailable =({availableTimeSlots,date,timeSlot})=>{
+    const startsAt = mergeDateAndTime(date,timeSlot);
+    if( availableTimeSlots.some(availableTimeSlot => availableTimeSlot.startsAt === startsAt )){
+        return (<input type="radio"  name="startsAt" value={startsAt} />);
+    }else{
+        return null;
+    }
+  }
+  const TimeSlotTable = ({ salonOpensAt, salonClosesAt, today ,availableTimeSlots }) => {
     const timeSlots = dailyTimeSlots(salonOpensAt, salonClosesAt);
     const dates = weeklyDateValues(today);
     return (
@@ -59,7 +72,10 @@ export const AppointmentForm = ({
             <tr key={timeSlot}>
               <th>{toTimeValue(timeSlot)}</th>
               {dates.map(date => (
-              <td key={date}> <input type="radio" />   </td>
+              <td key={date}> 
+                <RadioButtonIfAvailable availableTimeSlots={availableTimeSlots}  date={date}  timeSlot={timeSlot} /> 
+
+              </td>
             ))}
             </tr>
           ))}
@@ -86,12 +102,14 @@ export const AppointmentForm = ({
         salonOpensAt={salonOpensAt}
         salonClosesAt={salonClosesAt}
         today={today}
+        availableTimeSlots ={availableTimeSlots}
       />
     </form>
   );
 };
 
 AppointmentForm.defaultProps = {
+  availableTimeSlots: [],
   today: new Date(),
   salonOpensAt: 9,
   salonClosesAt: 19,
