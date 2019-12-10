@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTestUtils, { act } from 'react-dom/test-utils';
 import { createContainer } from './domManipulators';
 import { CustomerForm } from '../src/CustomerForm';
+import { fetchResponseOk,fetchResponseError ,fetchRequestBodyOf } from './spyHelpers';
 
 describe('CustomweForm', () => {
   const originalFetch = window.fetch;
@@ -32,13 +33,7 @@ describe('CustomweForm', () => {
     };
   };
    
-  const fetchResponseOk = body =>  
-    Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve(body)
-    });
-   
-  const fetchResponseError = () => Promise.resolve({ ok: false });
+ 
 
   // expect.extend({
   //   toHaveBeenCalled(received) {
@@ -92,9 +87,7 @@ describe('CustomweForm', () => {
     });
   };
 
-  const fetchRequestBody = ()=>
-    JSON.parse(fetchSpy.mock.calls[0][1].body);
-  ;
+  
   const itSubmitsExistingValue = (fieldName, valueName) => {
     it('saves existing value when submitted', async () => {
       // const fetchSpy = spy();
@@ -106,9 +99,9 @@ describe('CustomweForm', () => {
         />
       );
       await ReactTestUtils.Simulate.submit(form('customer'));
-      expect(fetchRequestBody()).toBeDefined();
+      expect(fetchRequestBodyOf(fetchSpy)).toBeDefined();
 
-      expect(fetchRequestBody()).toMatchObject({[fieldName]:valueName});
+      expect(fetchRequestBodyOf(fetchSpy)).toMatchObject({[fieldName]:valueName});
     });
   };
   const itSubmitsNewValue = (fieldName, valueName) => {
@@ -141,9 +134,9 @@ describe('CustomweForm', () => {
       // expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual(
       //   valueName
       // );
-      expect(fetchRequestBody()).toBeDefined();
+      expect(fetchRequestBodyOf(fetchSpy)).toBeDefined();
 
-      expect(fetchRequestBody()).toMatchObject({[fieldName]:valueName});
+      expect(fetchRequestBodyOf(fetchSpy)).toMatchObject({[fieldName]:valueName});
     });
   };
 
