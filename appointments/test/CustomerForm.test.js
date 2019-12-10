@@ -8,9 +8,17 @@ import { CustomerForm } from '../src/CustomerForm';
 import ReactTestUtils from 'react-dom/test-utils';
 
 describe('CustomweForm', () => {
+  const originalFetch = window.fetch;
+  let fetchSpy;
   let render, container;
   beforeEach(() => {
     ({ render, container } = createContainer());
+    fetchSpy = spy();
+    window.fetch = fetchSpy.fn;
+  });
+
+  afterEach(() => {
+    window.fetch = originalFetch;
   });
 
   const form = id => container.querySelector(`form[id="${id}"]`);
@@ -78,12 +86,12 @@ describe('CustomweForm', () => {
   });
   const itSubmitsExistingValue = (fieldName, valueName) => {
     it('saves existing value when submitted', async () => {
-      const fetchSpy = spy();
+      // const fetchSpy = spy();
       render(
-        <CustomerForm 
-        {...{ [fieldName]: valueName }}
-        fetch={fetchSpy.fn} 
-        onSubmit={() => {}} 
+        <CustomerForm
+          {...{ [fieldName]: valueName }}
+          fetch={fetchSpy.fn}
+          onSubmit={() => {}}
         />
       );
       await ReactTestUtils.Simulate.submit(form('customer'));
@@ -95,20 +103,22 @@ describe('CustomweForm', () => {
       expect(fetchOpts).toBeDefined();
       expect(fetchOpts.body).toBeDefined();
       expect(JSON.parse(fetchOpts.body)[fieldName]).toBeDefined();
-      expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual(valueName);
+      expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual(
+        valueName
+      );
     });
   };
   const itSubmitsNewValue = (fieldName, valueName) => {
     it('saves existing new value when submitted', async () => {
       // expect.hasAssertions();
-      const fetchSpy = spy();
+      // const fetchSpy = spy();
       render(
         <CustomerForm
           {...{ [fieldName]: valueName }}
           // onSubmit={props =>
           //   expect(props[fieldName]).toEqual(valueName)
           // }
-          fetch={fetchSpy.fn} 
+          fetch={fetchSpy.fn}
           onSubmit={() => {}}
         />
       );
@@ -125,7 +135,9 @@ describe('CustomweForm', () => {
       expect(fetchOpts).toBeDefined();
       expect(fetchOpts.body).toBeDefined();
       expect(JSON.parse(fetchOpts.body)[fieldName]).toBeDefined();
-      expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual(valueName);
+      expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual(
+        valueName
+      );
     });
   };
 
@@ -176,7 +188,7 @@ describe('CustomweForm', () => {
     // expect(container.querySelector('form[id="customer"]')).not.toBeNull();
   });
   it('call fetch with the right properies when submitting data', async () => {
-    const fetchSpy = spy();
+    // const fetchSpy = spy();
     render(
       <CustomerForm fetch={fetchSpy.fn} onSubmit={() => {}} />
     );
