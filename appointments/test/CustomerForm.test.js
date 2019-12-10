@@ -11,6 +11,7 @@ describe('CustomweForm', () => {
   const originalFetch = window.fetch;
   let fetchSpy;
   let render, container;
+  
   beforeEach(() => {
     ({ render, container } = createContainer());
     fetchSpy = spy();
@@ -30,7 +31,30 @@ describe('CustomweForm', () => {
     expect(formElement.tagName).toEqual('INPUT');
     expect(formElement.type).toEqual('text');
   };
-
+  const spy = () => {
+    let receivedArguments;
+    let returnValue;
+    return {
+      fn: (...args) => {
+        receivedArguments = args;
+        return returnValue;
+      },
+      receivedArguments: () => receivedArguments,
+      receivedArgument: (n) => receivedArguments[n],
+      stubReturValue : (value) => returnValue =value 
+    };
+  };
+  expect.extend({
+    toHaveBeenCalled(received) {
+      if (received.receivedArguments() === undefined) {
+        return {
+          pass: false,
+          message: () => 'Spy was not called'
+        };
+      }
+      return { pass: true, message: () => 'Spy was called' };
+    }
+  });
   //   const firstNameField = () => form("customer").elements.firstName;
   // const firstNameField = () =>  fieldProgram("firstName") ;
   //   const lastNameField = () => form("customer").elements.lastName;
@@ -65,25 +89,7 @@ describe('CustomweForm', () => {
       expect(fieldProgram(fieldName).id).toEqual(fieldName);
     });
   };
-  const spy = () => {
-    let receivedArguments;
-    return {
-      fn: (...args) => (receivedArguments = args),
-      receivedArguments: () => receivedArguments,
-      receivedArgument: n => receivedArguments[n]
-    };
-  };
-  expect.extend({
-    toHaveBeenCalled(received) {
-      if (received.receivedArguments() === undefined) {
-        return {
-          pass: false,
-          message: () => 'Spy was not called'
-        };
-      }
-      return { pass: true, message: () => 'Spy was called' };
-    }
-  });
+
   const itSubmitsExistingValue = (fieldName, valueName) => {
     it('saves existing value when submitted', async () => {
       // const fetchSpy = spy();
