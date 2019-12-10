@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 
+const Error = () => (
+  <div className="error">An error occurred during save.</div>
+);
+
 export const CustomerForm = ({ firstName, lastName,phoneNumber, onSave}) => {
   const [customer, setCustomer] = useState({ firstName, lastName ,phoneNumber });
+  const [error, setError] = useState(false);
   
   const handleChange= ({ target }) => {
     setCustomer(customer => ({
@@ -26,6 +31,7 @@ export const CustomerForm = ({ firstName, lastName,phoneNumber, onSave}) => {
   };
   return (
     <form id="customer" onSubmit={handleSubmit}>
+       {error ? <Error /> : null}
       <label htmlFor="firstName">First Name</label>
       <input
         type="text"

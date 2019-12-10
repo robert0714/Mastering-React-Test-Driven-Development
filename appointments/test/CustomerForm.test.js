@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
+import ReactTestUtils, { act } from 'react-dom/test-utils';
 import { createContainer } from './domManipulators';
-import {
-  isTSAnyKeyword,
-  exportAllDeclaration
-} from '@babel/types';
 import { CustomerForm } from '../src/CustomerForm';
-import ReactTestUtils  ,{act} from 'react-dom/test-utils';
 
 describe('CustomweForm', () => {
   const originalFetch = window.fetch;
-  let fetchSpy;
   let render, container;
+  let fetchSpy;
 
   beforeEach(() => {
     ({ render, container } = createContainer());
@@ -22,16 +18,6 @@ describe('CustomweForm', () => {
   afterEach(() => {
     window.fetch = originalFetch;
   });
-
-  const form = id => container.querySelector(`form[id="${id}"]`);
-  const labelFor = formElement =>
-    container.querySelector(`label[for="${formElement}"]`);
-
-  const expectToBeInputFieldOfTypeText = formElement => {
-    expect(formElement).not.toBeNull();
-    expect(formElement.tagName).toEqual('INPUT');
-    expect(formElement.type).toEqual('text');
-  };
   const spy = () => {
     let returnValue;
     let receivedArguments;
@@ -45,6 +31,15 @@ describe('CustomweForm', () => {
       stubReturnValue: value => (returnValue = value)
     };
   };
+   
+  const fetchResponseOk = body =>  
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(body)
+    });
+   
+  const fetchResponseError = () => Promise.resolve({ ok: false });
+
   expect.extend({
     toHaveBeenCalled(received) {
       if (received.receivedArguments() === undefined) {
@@ -56,21 +51,16 @@ describe('CustomweForm', () => {
       return { pass: true, message: () => 'Spy was called' };
     }
   });
-  const fetchResponseOk = body => {
-    Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve(body)
-    });
+
+  const form = id => container.querySelector(`form[id="${id}"]`);
+  const labelFor = formElement =>
+    container.querySelector(`label[for="${formElement}"]`);
+
+  const expectToBeInputFieldOfTypeText = formElement => {
+    expect(formElement).not.toBeNull();
+    expect(formElement.tagName).toEqual('INPUT');
+    expect(formElement.type).toEqual('text');
   };
-  const fetchResponseError = body => {
-    Promise.resolve({
-      ok: false
-    });
-  };
-  //   const firstNameField = () => form("customer").elements.firstName;
-  // const firstNameField = () =>  fieldProgram("firstName") ;
-  //   const lastNameField = () => form("customer").elements.lastName;
-  // const lastNameField = () =>  fieldProgram("lastName") ;
 
   const fieldProgram = name => form('customer').elements[name];
 
@@ -221,7 +211,7 @@ describe('CustomweForm', () => {
       'Content-Type': 'application/json'
     });
   });
-  it('notifies onSave when form is submitted', async() =>{
+  it('notifies onSave when form is submitted', async () => {
     const customer = { id: 123 };
     fetchSpy.stubReturnValue(fetchResponseOk(customer));
     const saveSpy = spy();
@@ -234,4 +224,29 @@ describe('CustomweForm', () => {
     expect(saveSpy).toHaveBeenCalled();
     expect(saveSpy.receivedArgument(0)).toEqual(customer);
   });
+  it('does not notify onSave if the POST request returns an error', async () => {
+    fetchSpy.stubReturnValue(fetchResponseError());
+    const saveSpy = spy();
+
+    render(<CustomerForm onSave={saveSpy.fn} />);
+    await act(async () => {
+      ReactTestUtils.Simulate.submit(form('customer'));
+    });
+
+    expect(saveSpy).not.toHaveBeenCalled();
+  });
+
+  it('prevents the default action when submitting the form', async () => {
+    const preventDefaultSpy = spy();
+
+    render(<CustomerForm />);
+    await act(async () => {
+      ReactTestUtils.Simulate.submit(form('customer'), {
+        preventDefault: preventDefaultSpy.fn
+      });
+    });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+  });
+
 });
