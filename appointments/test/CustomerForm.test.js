@@ -5,17 +5,18 @@ import {
   exportAllDeclaration
 } from '@babel/types';
 import { CustomerForm } from '../src/CustomerForm';
-import ReactTestUtils from 'react-dom/test-utils';
+import ReactTestUtils  ,{act} from 'react-dom/test-utils';
 
 describe('CustomweForm', () => {
   const originalFetch = window.fetch;
   let fetchSpy;
   let render, container;
-  
+
   beforeEach(() => {
     ({ render, container } = createContainer());
     fetchSpy = spy();
     window.fetch = fetchSpy.fn;
+    fetchSpy.stubReturnValue(fetchResponseOk({}));
   });
 
   afterEach(() => {
@@ -32,16 +33,16 @@ describe('CustomweForm', () => {
     expect(formElement.type).toEqual('text');
   };
   const spy = () => {
-    let receivedArguments;
     let returnValue;
+    let receivedArguments;
     return {
       fn: (...args) => {
         receivedArguments = args;
         return returnValue;
       },
       receivedArguments: () => receivedArguments,
-      receivedArgument: (n) => receivedArguments[n],
-      stubReturValue : (value) => returnValue =value 
+      receivedArgument: n => receivedArguments[n],
+      stubReturnValue: value => (returnValue = value)
     };
   };
   expect.extend({
@@ -55,6 +56,17 @@ describe('CustomweForm', () => {
       return { pass: true, message: () => 'Spy was called' };
     }
   });
+  const fetchResponseOk = body => {
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(body)
+    });
+  };
+  const fetchResponseError = body => {
+    Promise.resolve({
+      ok: false
+    });
+  };
   //   const firstNameField = () => form("customer").elements.firstName;
   // const firstNameField = () =>  fieldProgram("firstName") ;
   //   const lastNameField = () => form("customer").elements.lastName;
@@ -208,5 +220,18 @@ describe('CustomweForm', () => {
     expect(fetchOpts.headers).toEqual({
       'Content-Type': 'application/json'
     });
+  });
+  it('notifies onSave when form is submitted', async() =>{
+    const customer = { id: 123 };
+    fetchSpy.stubReturnValue(fetchResponseOk(customer));
+    const saveSpy = spy();
+
+    render(<CustomerForm onSave={saveSpy.fn} />);
+    await act(async () => {
+      ReactTestUtils.Simulate.submit(form('customer'));
+    });
+
+    expect(saveSpy).toHaveBeenCalled();
+    expect(saveSpy.receivedArgument(0)).toEqual(customer);
   });
 });
