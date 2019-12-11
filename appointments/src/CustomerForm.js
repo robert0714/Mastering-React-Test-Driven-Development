@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-const Error = () => (
+const Error = () => {return(
   <div className="error">An error occurred during save.</div>
-);
+);}
 
 export const CustomerForm = ({ firstName, lastName,phoneNumber, onSave}) => {
   const [customer, setCustomer] = useState({ firstName, lastName ,phoneNumber });
@@ -23,15 +23,18 @@ export const CustomerForm = ({ firstName, lastName,phoneNumber, onSave}) => {
       body: JSON.stringify(customer)
     });
     if (result.ok) {
+      setError(false);
       const customerWithId = await result.json();
       onSave(customerWithId);
     } else {
       setError(true);
     }
   };
+  
   return (
     <form id="customer" onSubmit={handleSubmit}>
        {error ? <Error /> : null}
+       {/* <Error /> */}
       <label htmlFor="firstName">First Name</label>
       <input
         type="text"
