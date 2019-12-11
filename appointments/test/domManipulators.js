@@ -11,25 +11,33 @@ export const createContainer = () => {
   const elements = selector =>
     container.querySelectorAll(selector);
 
-  
-  const simulateEvent = eventName =>(element,eventData)=> 
-    ReactTestUtils.Simulate[eventName](element,eventData);
- 
+  const simulateEvent = eventName => (element, eventData) =>
+    ReactTestUtils.Simulate[eventName](element, eventData);
 
-  const simulateEventAndAwait = eventName => async (element,eventData)=> 
-    await act(async () => ReactTestUtils.Simulate[eventName](element,eventData) );
-   
-  return {    
+  const simulateEventAndAwait = eventName => async (
+    element,
+    eventData
+  ) =>
+    await act(async () =>
+      ReactTestUtils.Simulate[eventName](element, eventData)
+    );
+
+  
+  
+  return {
     render: component => ReactDOM.render(component, container),
     container,
     form,
     field,
     labelFor,
     element,
-    elements
-    ,
+    elements,
     click: simulateEvent('click'),
     change: simulateEvent('change'),
     submit: simulateEventAndAwait('submit')
   };
 };
+
+export const withEvent = (name ,value)=>({
+  target:{name,value}
+});

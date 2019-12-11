@@ -1,5 +1,5 @@
 import React from 'react'; 
-import { createContainer } from './domManipulators';
+import { createContainer ,withEvent } from './domManipulators';
 import { CustomerForm } from '../src/CustomerForm';
 import { fetchResponseOk,fetchResponseError ,fetchRequestBodyOf } from './spyHelpers';
 // import { whatwg-fetch } from "whatwg-fetch";
@@ -13,9 +13,9 @@ describe('CustomweForm', () => {
   beforeEach(() => {
     ({ render, container ,form,field,labelFor,element,elements,change,submit} = createContainer());
     fetchSpy = jest.fn(() => fetchResponseOk({}));
-    // window.fetch = fetchSpy;
+    window.fetch = fetchSpy;
     fetchSpy.mockReturnValue(fetchResponseOk({}));
-    jest.spyOn(window,'fetch').mockReturnValue(fetchResponseOk({}));
+    // jest.spyOn(window,'fetch').mockReturnValue(fetchResponseOk({}));
   });
 
   afterEach(() => { 
@@ -100,9 +100,11 @@ describe('CustomweForm', () => {
       //   }
       // );
 
-      change(form('customer'),{
-        target: { value: valueName, name: fieldName }
-      });
+      // change(form('customer'),{
+      //   target: { value: valueName, name: fieldName }
+      // });
+      change(field("customer" ,fieldName),withEvent(fieldName ,valueName));
+
       // await ReactTestUtils.Simulate.submit(form('customer'));
       submit(form('customer'));
  
