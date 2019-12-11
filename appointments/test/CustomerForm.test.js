@@ -3,6 +3,8 @@ import ReactTestUtils, { act } from 'react-dom/test-utils';
 import { createContainer } from './domManipulators';
 import { CustomerForm } from '../src/CustomerForm';
 import { fetchResponseOk,fetchResponseError ,fetchRequestBodyOf } from './spyHelpers';
+// import { whatwg-fetch } from "whatwg-fetch";
+import  "whatwg-fetch";
 
 describe('CustomweForm', () => {
   const originalFetch = window.fetch;
@@ -12,12 +14,14 @@ describe('CustomweForm', () => {
   beforeEach(() => {
     ({ render, container } = createContainer());
     fetchSpy = jest.fn(() => fetchResponseOk({}));
-    window.fetch = fetchSpy;
+    // window.fetch = fetchSpy;
     fetchSpy.mockReturnValue(fetchResponseOk({}));
+    jest.spyOn(window,'fetch').mockReturnValue(fetchResponseOk({}));
   });
 
   afterEach(() => {
-    window.fetch = originalFetch;
+    // window.fetch = originalFetch;
+    window.fetch.mockRestore();
   });
   const spy = () => {
     let returnValue;
@@ -99,9 +103,9 @@ describe('CustomweForm', () => {
         />
       );
       await ReactTestUtils.Simulate.submit(form('customer'));
-      expect(fetchRequestBodyOf(fetchSpy)).toBeDefined();
+      expect(fetchRequestBodyOf(window.fetch)).toBeDefined();
 
-      expect(fetchRequestBodyOf(fetchSpy)).toMatchObject({[fieldName]:valueName});
+      expect(fetchRequestBodyOf(window.fetch)).toMatchObject({[fieldName]:valueName});
     });
   };
   const itSubmitsNewValue = (fieldName, valueName) => {
@@ -134,9 +138,9 @@ describe('CustomweForm', () => {
       // expect(JSON.parse(fetchOpts.body)[fieldName]).toEqual(
       //   valueName
       // );
-      expect(fetchRequestBodyOf(fetchSpy)).toBeDefined();
+      expect(fetchRequestBodyOf(window.fetch)).toBeDefined();
 
-      expect(fetchRequestBodyOf(fetchSpy)).toMatchObject({[fieldName]:valueName});
+      expect(fetchRequestBodyOf(window.fetch)).toMatchObject({[fieldName]:valueName});
     });
   };
 
@@ -189,7 +193,7 @@ describe('CustomweForm', () => {
   it('call fetch with the right properies when submitting data', async () => {
     // const fetchSpy = spy();
     render(
-      <CustomerForm fetch={fetchSpy.fn} onSubmit={() => {}} />
+      <CustomerForm fetch={window.fetch.fn} onSubmit={() => {}} />
     );
     await ReactTestUtils.Simulate.submit(form('customer'));
     // expect(fetchSpy.receivedArguments()).toBeDefined();
@@ -202,7 +206,7 @@ describe('CustomweForm', () => {
     // expect(fetchOpts.headers).toEqual({
     //   'Content-Type': 'application/json'
     // });
-      expect(fetchSpy).toHaveBeenCalledWith(
+      expect(window.fetch).toHaveBeenCalledWith(
         '/customers',
         expect.objectContaining({
           method: 'POST',
@@ -215,7 +219,7 @@ describe('CustomweForm', () => {
   });
   it('notifies onSave when form is submitted', async () => {
     const customer = { id: 123 };
-    fetchSpy.mockReturnValue(fetchResponseOk(customer));
+    window.fetch.mockReturnValue(fetchResponseOk(customer));
     const saveSpy = jest.fn();
 
     render(<CustomerForm onSave={saveSpy} />);
@@ -228,7 +232,7 @@ describe('CustomweForm', () => {
     expect(saveSpy).toHaveBeenCalledWith(customer);
   });
   it('does not notify onSave if the POST request returns an error', async () => {
-    fetchSpy.mockReturnValue(fetchResponseError());
+    window.fetch.mockReturnValue(fetchResponseError());
     const saveSpy = jest.fn();
 
     render(<CustomerForm onSave={saveSpy} />);
