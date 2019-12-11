@@ -22,10 +22,15 @@ export const createContainer = () => {
       ReactTestUtils.Simulate[eventName](element, eventData)
     );
 
-  
-  
   return {
-    render: component => ReactDOM.render(component, container),
+    renderAndWait: async component =>
+      await act(async () => {
+        ReactDOM.render(component, container);
+      }),
+    render: component =>
+      act(() => {
+        ReactDOM.render(component, container);
+      }),
     container,
     form,
     field,
@@ -38,6 +43,6 @@ export const createContainer = () => {
   };
 };
 
-export const withEvent = (name ,value)=>({
-  target:{name,value}
+export const withEvent = (name, value) => ({
+  target: { name, value }
 });
