@@ -1,7 +1,7 @@
 import { isTSAnyKeyword, exportAllDeclaration } from "@babel/types";
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { Appointment ,AppointmentsDayView } from "../src/Appointment"; 
+import { Appointment ,AppointmentsDayView } from "../src/AppointmentsDayView"; 
 import ReactTestUtils from 'react-dom/test-utils';
 
 

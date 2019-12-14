@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Appointment ,AppointmentsDayView} from './Appointment';
+import { Appointment ,AppointmentsDayView} from './AppointmentsDayView';
+
 
 export const AppointmentsDayViewLoader = ({ today }) => {
   const [appointments ,setAppointments] =useState([]);
   useEffect(() => {
     const from = today.setHours(0, 0, 0, 0);
     const to = today.setHours(23, 59, 59, 999);
-    const fetchAppointments = async() => {
-      const result = await window.fetch(`/appointments/${from}-${to}`, {
+    const fetchAppointments = () => {
+      const result = await  window.fetch(`/appointments/${from}-${to}`, {
         method: 'GET',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' }
@@ -17,6 +18,7 @@ export const AppointmentsDayViewLoader = ({ today }) => {
     fetchAppointments();
   }, [ today]);
   return <AppointmentsDayView appointments ={setAppointments} />;
+  // return <AppointmentsDayView appointments ={[]} />;
 };
 
 
