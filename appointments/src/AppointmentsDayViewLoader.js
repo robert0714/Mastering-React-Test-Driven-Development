@@ -17,7 +17,7 @@ export const AppointmentsDayViewLoader = ({ today }) => {
     };
     fetchAppointments();
   }, [ today]);
-  return <AppointmentsDayView appointments ={setAppointments} />;
+  return <AppointmentsDayView appointments ={appointments} />;
   // return <AppointmentsDayView appointments ={[]} />;
 };
 

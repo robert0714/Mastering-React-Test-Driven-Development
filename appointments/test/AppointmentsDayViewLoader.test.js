@@ -77,9 +77,7 @@ describe('AppointmentsDayViewLoader', () => {
     await renderAndWait(
       <AppointmentsDayViewLoader today={tomorrow} />
     );
-    expect(
-      AppointmentsDayViewExports.AppointmentsDayView
-    ).toHaveBeenCalledWith(
+    expect(window.fetch).toHaveBeenLastCalledWith(
       `/appointments/${from}-${to}`,
       expect.anything()
     );
