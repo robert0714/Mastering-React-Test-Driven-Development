@@ -48,7 +48,7 @@ describe('AppointmentsDayViewLoader', () => {
   it('initially passes no data to AppointmentsDayView', async () => {
     await renderAndWait(<AppointmentsDayViewLoader />);
     expect(
-      AppointmentsDayViewLoader.AppointmentsDayView
+      AppointmentsDayViewExports.AppointmentsDayView
     ).toHaveBeenCalledWith(
       { appointments: [] },
       expect.anything()
