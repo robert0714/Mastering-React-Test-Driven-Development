@@ -2,10 +2,9 @@ import React from 'react';
 import { createContainer ,withEvent } from './domManipulators';
 import { CustomerForm } from '../src/CustomerForm';
 import { fetchResponseOk,fetchResponseError ,fetchRequestBodyOf } from './spyHelpers';
-// import { whatwg-fetch } from "whatwg-fetch";
 import  "whatwg-fetch";
 
-describe('CustomweForm', () => {
+describe('CustomerForm', () => {
   const originalFetch = window.fetch;
   let render, container,form,field,labelFor,element,elements,change,submit;
   let fetchSpy;

@@ -3,11 +3,8 @@ import 'whatwg-fetch';
 import { createContainer } from './domManipulators';
 import { fetchResponseOk } from './spyHelpers';
 import { AppointmentsDayViewLoader } from '../src/AppointmentsDayViewLoader';
-import * as AppointmentFormExports from '../src/AppointmentForm';
 import * as AppointmentsDayViewExports from '../src/AppointmentsDayView';
-import { AppointmentsDayView } from '../src/AppointmentsDayView';
 
-import { AppointmentFormLoader } from '../src/AppointmentFormLoader';
 
 describe('AppointmentsDayViewLoader', () => {
   let render, container, renderAndWait;

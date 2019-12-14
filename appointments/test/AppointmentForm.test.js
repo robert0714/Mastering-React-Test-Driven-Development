@@ -1,28 +1,26 @@
-import React, { useState } from "react";
+import React  from "react";
 import { createContainer } from "./domManipulators";
-import { isTSAnyKeyword, exportAllDeclaration } from "@babel/types";
 import { AppointmentForm } from "../src/AppointmentForm";
-import ReactTestUtils from "react-dom/test-utils";
 
 describe("AppointmentForm", () => {
-  let render, container;
+  let render, container,element,elements,change,submit ;
   beforeEach(() => {
-    ({ render, container } = createContainer());
+    ({ render, container,element,elements,change,submit} = createContainer());
   });
-  const form = id => container.querySelector(`form[id="${id}"]`);
+  const form = id => element(`form[id="${id}"]`);
   const field = name => form("appointment").elements[name];
   const fieldProgram = name => form("appointment").elements[name];
-  const timeSlotTable = () => container.querySelector("table#time-slots");
+  const timeSlotTable = () => element("table#time-slots");
 
   const findOption = (dropdownNode, textContent) => {
     const options = Array.from(dropdownNode.childNodes);
     return options.find(option => option.textContent === textContent);
   };
   const labelFor = formElement =>
-    container.querySelector(`label[for="${formElement}"]`);
+    element(`label[for="${formElement}"]`);
 
   const startsAtField = index => 
-    container.querySelectorAll(`input[name="startsAt"]`)[index];
+    elements(`input[name="startsAt"]`)[index];
 
 
   const itRendersALabel = (fieldName, valueName) => {
@@ -42,7 +40,7 @@ describe("AppointmentForm", () => {
           onSubmit={props => expect(props[fieldName]).toEqual(valueName)}
         />
       );
-      await ReactTestUtils.Simulate.submit(form("appointment"));
+      submit(form("appointment"));
     });
   };
   const itSubmitsNewValue = (fieldName, valueName) => {
@@ -54,14 +52,12 @@ describe("AppointmentForm", () => {
           onSubmit={props => expect(props[fieldName]).toEqual(valueName)}
         />
       );
-      await ReactTestUtils.Simulate.change(fieldProgram(fieldName), {
+      change(fieldProgram(fieldName), {
         target: { value: valueName, name: fieldName }
       });
-      await ReactTestUtils.Simulate.submit(form("appointment"));
+      submit(form("appointment"));
     });
   };
-  
-
 
   it("it renders a form", () => {
     render(<AppointmentForm />);
@@ -194,13 +190,13 @@ describe("AppointmentForm", () => {
         }
         />
       );
-      ReactTestUtils.Simulate.change(startsAtField(1),{
+      change(startsAtField(1),{
         target:{
           value: availableTimeSlots[1].startsAt.toString(), 
           name: 'startsAt'
         }
       });
-      ReactTestUtils.Simulate.submit(form("appointment"));
+      submit(form("appointment"));
     });
   });
 });

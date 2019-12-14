@@ -1,14 +1,10 @@
-import { isTSAnyKeyword, exportAllDeclaration } from "@babel/types";
-import ReactDOM from 'react-dom';
 import React from 'react';
 import { Appointment ,AppointmentsDayView } from "../src/AppointmentsDayView"; 
-import ReactTestUtils from 'react-dom/test-utils';
-
+import { createContainer } from './domManipulators';
 
 describe('AppointmentsDayView' , () =>{
-   let container;
+   let render, container,click,element,elements ;
    let customer;
-   let render ;
    const today = new Date();
    const appointments = [
       {
@@ -22,8 +18,8 @@ describe('AppointmentsDayView' , () =>{
     ];
  
    beforeEach(() => {
-     container = document.createElement('div');
-     render = (component) => ReactDOM.render(component , container );
+     ({ render, container,click,element,elements} = createContainer());
+  
    });
     
 
@@ -42,22 +38,22 @@ describe('AppointmentsDayView' , () =>{
 
    it ('renders a div with the right id',() =>{
       render(<AppointmentsDayView appointments = { [] } />);
-      expect(container.querySelector('div#appointmentsDayView')).not.toBeNull();
+       expect(element('div#appointmentsDayView')).not.toBeNull();
    });
 
    it('renders multiple appointments in an ol elements',() => {
      
       render(<AppointmentsDayView  appointments={appointments} />);
-      expect(container.querySelector('ol')).not.toBeNull();
-      expect(container.querySelector('ol').children).toHaveLength(2);;
+      expect(element('ol')).not.toBeNull();
+      expect(element('ol').children).toHaveLength(2);;
    });
 
    it('renders each appointment in  an li', ()=> {
        
       render(<AppointmentsDayView appointments={appointments} />);
-      expect(container.querySelectorAll('li')).toHaveLength(2);
-      expect(container.querySelectorAll('li')[0].textContent).toEqual('12:00');
-      expect(container.querySelectorAll('li')[1].textContent).toEqual('13:00');
+      expect(elements('li')).toHaveLength(2);
+      expect(elements('li')[0].textContent).toEqual('12:00');
+      expect(elements('li')[1].textContent).toEqual('13:00');
       
    });
 
@@ -66,17 +62,15 @@ describe('AppointmentsDayView' , () =>{
       expect(container.textContent).toMatch('There are no appointments scheduled for today.');
    });
 
-   it('selects the first appointment by default.', ()=> {
-       
+   it('selects the first appointment by default.', ()=> {       
       render(<AppointmentsDayView  appointments={appointments} />);
       expect(container.textContent).toMatch('Ashley');
    });
 
-   it('has a button element in each li element', () => {
-       
+   it('has a button element in each li element', () => {       
       render(<AppointmentsDayView  appointments={appointments} />);
-      const button = container.querySelectorAll('button')[1] ;
-      ReactTestUtils.Simulate.click(button);
+      const button = elements('button')[1] ;
+      click(button);
       expect(container.textContent).toMatch('Jordan');
 
    });

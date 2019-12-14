@@ -2,6 +2,7 @@ import React, { useEffect ,useState} from 'react';
 import {AppointmentForm} from "./AppointmentForm";
 
 export const AppointmentFormLoader = () => {
+  const [availableTimeSlots ,setAvailableTimeSlots] = useState([]);
   useEffect(() => {
     const fetchAvailableTimeSlots = async () => {
       const result =await window.fetch('/availableTimeSlots', {
@@ -13,6 +14,6 @@ export const AppointmentFormLoader = () => {
     };
     fetchAvailableTimeSlots();
   }, []);
-  const [availableTimeSlots ,setAvailableTimeSlots] = useState([]);
+  
   return (<AppointmentForm availableTimeSlots={availableTimeSlots} />);
 };
