@@ -55,7 +55,7 @@ describe('AppointmentsDayViewLoader', () => {
     );
   });
 
-  it.skip('displays time slots that are fetched on mount', async () => {
+  it('displays time slots that are fetched on mount', async () => {
     await renderAndWait(<AppointmentsDayViewLoader />);
     expect(
       AppointmentsDayViewExports.AppointmentsDayView
@@ -66,7 +66,7 @@ describe('AppointmentsDayViewLoader', () => {
       expect.anything()
     );
   });
-  it.skip('re-requests appointment when today prop changes', async () => {
+  it('re-requests appointment when today prop changes', async () => {
     const tomorrow = new Date(today);
     tomorrow.setHours(24);
     const from = tomorrow.setHours(0, 0, 0, 0);

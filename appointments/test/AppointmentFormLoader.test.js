@@ -8,14 +8,14 @@ import * as AppointmentFormExports from '../src/AppointmentForm';
 describe('AppointmentFormLoader', () => {
   let render, container, renderAndWait;
   const today = new Date();
-  const avalaibleTimeSlots = [
+  const availableTimeSlots = [
     { startsAt: today.setHours(9, 0, 0, 0) }
   ];
   beforeEach(() => {
     ({ render, container, renderAndWait } = createContainer());
     jest
       .spyOn(window, 'fetch')
-      .mockReturnValue(fetchResponseOk(avalaibleTimeSlots));
+      .mockReturnValue(fetchResponseOk(availableTimeSlots));
     jest
       .spyOn(AppointmentFormExports, 'AppointmentForm')
       .mockReturnValue(null);
@@ -47,7 +47,7 @@ describe('AppointmentFormLoader', () => {
     );
   });
 
-  it.skip('displays time slots that are fetched on mount', async () => {
+  it('displays time slots that are fetched on mount', async () => {
     await renderAndWait(<AppointmentFormLoader />);
 
     expect(
