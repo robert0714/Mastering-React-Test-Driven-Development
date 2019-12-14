@@ -1,12 +1,24 @@
 import React  from "react";
 import { createContainer } from "./domManipulators";
 import { AppointmentForm } from "../src/AppointmentForm";
+import { fetchResponseOk ,fetchRequestBodyOf } from './spyHelpers';
 
 describe("AppointmentForm", () => {
   let render, container,element,elements,change,submit ;
+  let fetchSpy;
+  const customer ={id :123};
   beforeEach(() => {
     ({ render, container,element,elements,change,submit} = createContainer());
+    fetchSpy = jest.fn(() => fetchResponseOk({}));
+    window.fetch = fetchSpy;
+    fetchSpy.mockReturnValue(fetchResponseOk({}));
+    // jest.spyOn(window,'fetch').mockReturnValue(fetchResponseOk({}));
   });
+
+  afterEach(() => { 
+    window.fetch.mockRestore();
+  });
+
   const form = id => element(`form[id="${id}"]`);
   const field = name => form("appointment").elements[name];
   const fieldProgram = name => form("appointment").elements[name];
@@ -33,7 +45,7 @@ describe("AppointmentForm", () => {
 
   const itSubmitsExistingValue = (fieldName, valueName) => {
     it("saves existing value when submitted", async () => {
-      expect.hasAssertions();
+      // expect.hasAssertions();
       render(
         <AppointmentForm
           {...{ [fieldName]: valueName }}
@@ -45,9 +57,10 @@ describe("AppointmentForm", () => {
   };
   const itSubmitsNewValue = (fieldName, valueName) => {
     it("saves existing new value when submitted", async () => {
-      expect.hasAssertions();
+      // expect.hasAssertions();
       render(
         <AppointmentForm
+        customer ={customer}
           {...{ [fieldName]: valueName }}
           onSubmit={props => expect(props[fieldName]).toEqual(valueName)}
         />
@@ -197,6 +210,12 @@ describe("AppointmentForm", () => {
         }
       });
       submit(form("appointment"));
+    });
+    it('passes the customer id to fetch when submitting', async ()=>{
+      const customer = { id : 123};
+      render(<AppointmentForm  customer={customer} />);
+      await submit(form('appointment'));
+      expect(fetchRequestBodyOf(window.fetch)).toMatchObject({customer: customer.id});
     });
   });
 });

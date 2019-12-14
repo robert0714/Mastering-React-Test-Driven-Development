@@ -5,14 +5,15 @@ import { fetchResponseOk } from './spyHelpers';
 import { AppointmentFormLoader } from '../src/AppointmentFormLoader';
 import * as AppointmentFormExports from '../src/AppointmentForm';
 
+
 describe('AppointmentFormLoader', () => {
-  let render, container, renderAndWait;
+  let render, form, renderAndWait,submit;
   const today = new Date();
   const availableTimeSlots = [
     { startsAt: today.setHours(9, 0, 0, 0) }
   ];
   beforeEach(() => {
-    ({ render, container, renderAndWait } = createContainer());
+    ({ render, form, renderAndWait,submit } = createContainer());
     jest
       .spyOn(window, 'fetch')
       .mockReturnValue(fetchResponseOk(availableTimeSlots));
@@ -59,4 +60,13 @@ describe('AppointmentFormLoader', () => {
       expect.anything()
     );
   });
+  it('passes props through to children', async() =>{
+    await renderAndWait(<AppointmentFormLoader  testProp={123} />);
+    expect(AppointmentFormExports.AppointmentForm).
+    toHaveBeenCalledWith(expect.objectContaining(
+      {testProp : 123}),
+      expect.anything()
+    );
+  });
+  
 });

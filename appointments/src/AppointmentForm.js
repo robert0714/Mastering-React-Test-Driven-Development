@@ -1,19 +1,40 @@
 import React, { useState ,useCallback } from "react";
-
+const Error = () => (
+  <div className="error">An error occurred during save.</div>
+);
 export const AppointmentForm = ({
   selectableServices,
   service,
   onSubmit,
   salonOpensAt,
   salonClosesAt,
-  today,availableTimeSlots
+  today,availableTimeSlots,customer
 }) => {
   const [appointment, setAppointment] = useState({ service });
+  const [error, setError] = useState(false);
   const handleChange = ({ target }) => {
     setAppointment(appointment => ({
       ...appointment,
       [target.name]: target.value
     }));
+  };
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const result = await window.fetch('/appointments', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({...appointment ,
+        customer: customer.id
+      })
+    });
+    if (result.ok) {
+      setError(false);
+      // const customerWithId = await result.json();
+      // onSave(customerWithId);
+    } else {
+      setError(true);
+    }
   };
   const toTimeValue = timestamp =>
     new Date(timestamp).toTimeString().substring(0, 5);
@@ -113,7 +134,8 @@ const RadioButtonIfAvailable = ({
     );
   };
   return (
-    <form id="appointment" onSubmit={() => onSubmit(appointment)}>
+    <form id="appointment" onSubmit={handleSubmit}>
+      {error ? <Error /> : null}
       <label htmlFor="service">Salon Service</label>
       <select
         name="service"
