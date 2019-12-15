@@ -21,10 +21,29 @@ export const childrenOf = element => {
     return [children];
 };
 
+const elementsMatching =(element ,matcherFn) =>{
+    if(matcherFn(element)){
+        return [element] ;
+    }
+    return    childrenOf(element).reduce(
+        (acc,child) =>[
+            ...acc,
+            ...elementsMatching(child ,matcherFn)
+        ],
+        []
+    );
+};
+export const type = typeNme =>element => element.type === typeNme ;
+export const id = id => element =>element.props.id === id ;
+export const className  =className => element =>element.props.className === className ;
+export const click  = click => element =>element.props.click === click ;
 export const createShallowRenderer =() =>{
     let renderer = new ShallowRenderer();
     return{
         render: component => renderer.render(component),
-        child: n => childrenOf(renderer.getRenderOutput())[n]
+        child: n => childrenOf(renderer.getRenderOutput())[n],
+        elementMatching: matcherFn =>
+            elementsMatching(renderer.getRenderOutput() ,matcherFn)[0],
+        elementsMatching: matcherFn =>elementsMatching(renderer.getRenderOutput() ,matcherFn)
     };
 };
