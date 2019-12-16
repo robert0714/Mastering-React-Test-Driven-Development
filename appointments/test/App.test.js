@@ -2,6 +2,8 @@ import React from 'react';
 import {
   createShallowRenderer,
   type,
+  click,
+  id,
   childrenOf,
   className
 } from './shallowHelpers';
@@ -10,6 +12,7 @@ import { createContainer } from './domManipulators';
 import { fetchResponseOk } from './spyHelpers';
 import { AppointmentsDayViewLoader } from '../src/AppointmentsDayViewLoader';
 import { App } from '../src/App';
+import CustomerForm from '../src/CustomerForm';
 
 describe('App', () => {
   let render, elementMatching, child;
@@ -19,6 +22,10 @@ describe('App', () => {
   afterEach(() => {
     // window.fetch.mockRestore();
   });
+  const begineAddingCustomerFormAppointment =()=>{
+    render(<App />);
+    click(elementMatching(id('addCustomer')));
+  }
   it('initially shows the AppointmentsDayViewLoader', () => {
     render(<App />);
     expect(
@@ -40,5 +47,10 @@ describe('App', () => {
     expect(buttons[0].props.children).toEqual(
       'Add customer and appointment'
     );
+  });
+
+  it('displays the CustomerForm when button is clicked',() =>{
+    begineAddingCustomerFormAppointment();
+    expect(elementMatching(type(CustomerForm))).toBeDefined();
   });
 });
