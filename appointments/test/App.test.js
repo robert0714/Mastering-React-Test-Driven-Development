@@ -1,5 +1,10 @@
 import React from 'react';
-import { createShallowRenderer, type } from './shallowHelpers';
+import {
+  createShallowRenderer,
+  type,
+  childrenOf,
+  className
+} from './shallowHelpers';
 import 'whatwg-fetch';
 import { createContainer } from './domManipulators';
 import { fetchResponseOk } from './spyHelpers';
@@ -24,5 +29,16 @@ describe('App', () => {
     render(<App />);
     expect(child(0).type).toEqual('div');
     expect(child(0).props.className).toEqual('button-bar');
+  });
+
+  it('has a button to initiate add customer and appointment action', () => {
+    render(<App />);
+    const buttons = childrenOf(
+      elementMatching(className('button-bar'))
+    );
+    expect(buttons[0].type).toEqual('button');
+    expect(buttons[0].props.children).toEqual(
+      'Add customer and appointment'
+    );
   });
 });
