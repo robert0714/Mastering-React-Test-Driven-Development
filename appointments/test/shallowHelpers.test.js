@@ -66,13 +66,13 @@ describe('elementsMatching' ,() => {
             <p>A</p>
             <p>B</p>
         </TestComponent>);
-         expect(elementsMatching(type('P'))).toEqual([<p>A</p>,<p>B</p>]);
+         expect(elementsMatching(type('p'))).toEqual([<p>A</p>,<p>B</p>]);
     });
     it ('finds indirect children',()=>{
         render(<TestComponent>
             <p>A</p>
         </TestComponent>);
-         expect(elementsMatching(type('P'))).toEqual([<p>A</p>]);
+         expect(elementsMatching(type('p'))).toEqual([<p>A</p>]);
     });
 });
 
@@ -82,11 +82,14 @@ describe('elementMatching' ,() => {
         ({ render  ,elementMatching }  = createShallowRenderer() );
     });
    
-    it ('finds first direct children',()=>{
-        render(<TestComponent>
+    it ('finds first direct child',()=>{
+        render(
+        <TestComponent>
             <p>A</p>
             <p>B</p>
-        </TestComponent>);
-         expect(elementMatching(type('P'))).toEqual([<p>A</p>]);
+        </TestComponent>
+        );
+        expect(elementMatching(type('p'))).toEqual(<p>A</p>);
+        // expect(elementMatching(type('p'))).toEqual([<p>A</p>]);
     });
 });
