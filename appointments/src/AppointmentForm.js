@@ -110,7 +110,7 @@ const TimeSlotTable = ({
 export const AppointmentForm = ({
   selectableServices,
   service,
-  onSubmit,
+  onSave,
   salonOpensAt,
   salonClosesAt,
   today,
@@ -140,6 +140,7 @@ export const AppointmentForm = ({
       setError(false);
       // const customerWithId = await result.json();
       // onSave(customerWithId);
+      onSave();
     } else {
       setError(true);
     }
@@ -192,5 +193,6 @@ AppointmentForm.defaultProps = {
     'Beard trim',
     'Cut & beard trim',
     'Extensions'
-  ]
+  ],
+  onSave: () => {}
 };
