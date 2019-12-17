@@ -4,7 +4,7 @@ import { CustomerForm } from '../src/CustomerForm';
 import { fetchResponseOk,fetchResponseError ,fetchRequestBodyOf } from './spyHelpers';
 import  "whatwg-fetch";
 
-describe('CustomerForm', () => {
+describe.skip('CustomerForm', () => {
   const originalFetch = window.fetch;
   let render, container,form,field,labelFor,element,elements,change,submit;
   let fetchSpy;

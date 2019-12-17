@@ -14,7 +14,7 @@ import { AppointmentsDayViewLoader } from '../src/AppointmentsDayViewLoader';
 import { App } from '../src/App';
 import CustomerForm from '../src/CustomerForm';
 
-describe('App', () => {
+describe.skip('App', () => {
   let render, elementMatching, child;
   beforeEach(() => {
     ({ render, elementMatching, child } = createShallowRenderer());
