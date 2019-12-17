@@ -25,7 +25,8 @@ export const CustomerForm = ({
   const handleBlur = ({ target }) => {
     const validators = {
       firstName: required('First name is required'),
-      lastName: required('Last name is required')
+      lastName: required('Last name is required'),
+      phoneNumber: required('Phone number is required')
     };
     const result = validators[target.name](target.value);
     setValiationErrors({
@@ -44,8 +45,6 @@ export const CustomerForm = ({
       );
     }
   };
-
-  
 
   const handleChange = ({ target }) => {
     setCustomer(customer => ({
@@ -91,14 +90,16 @@ export const CustomerForm = ({
         value={lastName}
         onBlur={handleBlur}
         onChange={handleChange}></input>
-       {renderError('lastName')}
+      {renderError('lastName')}
       <label htmlFor="phoneNumber">Phone Number</label>
       <input
         type="text"
         name="phoneNumber"
         id="phoneNumber"
         value={phoneNumber}
+        onBlur={handleBlur}
         onChange={handleChange}></input>
+      {renderError('phoneNumber')}
       <input type="submit" value="Add" />
     </form>
   );

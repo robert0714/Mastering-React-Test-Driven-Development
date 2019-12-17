@@ -268,22 +268,26 @@ describe('CustomerForm', () => {
 
     expect(element('.error')).toBeNull();
   });
-  it('displays error after blur when first name field is blank', () => {
-    render(<CustomerForm />);
-    blur(
-      field('customer', 'firstName'),
-      withEvent('firstName', '')
-    );
-    expect(element('.error')).not.toBeNull();
-    expect(element('.error').textContent).toMatch('First name is required');
-  });
-  it('displays error after blur when last name field is blank', () => {
-    render(<CustomerForm />);
-    blur(
-      field('customer', 'lastName'),
-      withEvent('lastName', '')
-    );
-    expect(element('.error')).not.toBeNull();
-    expect(element('.error').textContent).toMatch('Last name is required');
+  describe('validation test', () => {
+    const itInvalidatesFieldWithValue = (
+      fieldName,
+      value,
+      description
+    ) => {
+      it(`displays error after blur when ${fieldName} field is '${value}' `, () => {
+        render(<CustomerForm />);
+        blur(
+          field('customer', fieldName),
+          withEvent(fieldName, '')
+        );
+        expect(element('.error')).not.toBeNull();
+        expect(element('.error').textContent).toMatch(
+          description
+        );
+      });
+    };
+    itInvalidatesFieldWithValue('firstName','','First name is required');
+    itInvalidatesFieldWithValue('lastName','','Last name is required');
+    itInvalidatesFieldWithValue('phoneNumber','','Phone number is required');
   });
 });
