@@ -1,6 +1,6 @@
 import React from 'react';
 import 'whatwg-fetch';
-import { createContainer } from './domManipulators';
+import { createContainer, withEvent } from './domManipulators';
 import { AppointmentForm } from '../src/AppointmentForm';
 import {
   fetchResponseOk,
@@ -103,20 +103,75 @@ describe('AppointmentForm', () => {
     await submit(form('appointment'));
     expect(saveSpy).toHaveBeenCalled();
   });
-  const itSubmitsExistingValue = (fieldName, valueName) => {
+  const itSubmitsExistingValue = (fieldName, props) => {
+    //Warining happend
     it('saves existing value when submitted', async () => {
-      // expect.hasAssertions();
       render(
         <AppointmentForm
-          {...{ [fieldName]: valueName }}
-          onSubmit={props =>
-            expect(props[fieldName]).toEqual(valueName)
-          }
+          customer={customer}
+          {...props}
+          {...{ [fieldName]: 'value' }}
         />
       );
-      submit(form('appointment'));
+      await submit(form('appointment'));
+
+      expect(requestBodyOf(window.fetch)).toMatchObject({
+        [fieldName]: 'value'
+      });
     });
   };
+  it('does not notify onSave if the POST request returns an error', async () => {
+    window.fetch.mockReturnValue(fetchResponseError());
+    const saveSpy = jest.fn();
+
+    render(
+      <AppointmentForm onSave={saveSpy} customer={customer} />
+    );
+    await submit(form('appointment'));
+
+    expect(saveSpy).not.toHaveBeenCalled();
+  });
+  it('prevents the default action when submitting the form', async () => {
+    const preventDefaultSpy = jest.fn();
+
+    render(<AppointmentForm customer={customer} />);
+    await submit(form('appointment'), {
+      preventDefault: preventDefaultSpy
+    });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+  });
+
+  it('renders error message when fetch call fails', async () => {
+    window.fetch.mockReturnValue(fetchResponseError());
+
+    render(<AppointmentForm customer={customer} />);
+    await submit(form('appointment'));
+
+    expect(element('.error')).not.toBeNull();
+    expect(element('.error').textContent).toMatch(
+      'error occurred'
+    );
+  });
+
+  it('clears error message when fetch call succeeds', async () => {
+    window.fetch.mockReturnValueOnce(fetchResponseError());
+    window.fetch.mockReturnValue(fetchResponseOk());
+
+    render(<AppointmentForm customer={customer} />);
+    await submit(form('appointment'));
+    await submit(form('appointment'));
+
+    expect(element('.error')).toBeNull();
+  });
+
+  it('passes the customer id to fetch when submitting', async () => {
+    render(<AppointmentForm customer={customer} />);
+    await submit(form('appointment'));
+    expect(requestBodyOf(window.fetch)).toMatchObject({
+      customer: customer.id
+    });
+  });
   const itSubmitsNewValue = (fieldName, valueName) => {
     it('saves existing new value when submitted', async () => {
       // expect.hasAssertions();
@@ -135,23 +190,28 @@ describe('AppointmentForm', () => {
       submit(form('appointment'));
     });
   };
-
-  describe('service field', () => {
+  const itRendersASelectBox = fieldName => {
     it('it rendes a select box', () => {
       render(<AppointmentForm />);
-      expect(field('appointment', 'service')).not.toBeNull();
-      expect(field('appointment', 'service').tagName).toEqual(
+      expect(field('appointment', fieldName)).not.toBeNull();
+      expect(field('appointment', fieldName).tagName).toEqual(
         'SELECT'
       );
     });
-
+  };
+  const itInitiallyHasABlankValueChosen = fieldName => {
     it('initially has a blank value chosen', () => {
       render(<AppointmentForm />);
-      const firstNode = field('appointment', 'service')
+      const firstNode = field('appointment', fieldName)
         .childNodes[0];
       expect(firstNode.value).toEqual('');
       expect(firstNode.selected).toBeTruthy();
     });
+  };
+
+  describe('service field', () => {
+    itRendersASelectBox('service');
+    itInitiallyHasABlankValueChosen('service');
 
     it('lists all salon services', () => {
       const selectableServices = [
@@ -211,6 +271,11 @@ describe('AppointmentForm', () => {
     itSubmitsNewValue('service', 'Cut');
   });
   describe('time slots table', () => {
+    const today = new Date();
+    const availableTimeSlots = [
+      { startsAt: today.setHours(9, 0, 0, 0) },
+      { startsAt: today.setHours(9, 30, 0, 0) }
+    ];
     it('renders a table for time slots', () => {
       render(<AppointmentForm />);
       expect(
@@ -248,15 +313,9 @@ describe('AppointmentForm', () => {
       expect(dates[6].textContent).toEqual('Fri 07');
     });
     it('renders a radio button for each time slot', () => {
-      const date = new Date();
-      const availableTimeSlots = [
-        { startsAt: date.setHours(9, 0, 0, 0) },
-        { startsAt: date.setHours(9, 30, 0, 0) }
-      ];
-
       render(
         <AppointmentForm
-          today={date}
+          today={today}
           availableTimeSlots={availableTimeSlots}
         />
       );
@@ -304,29 +363,23 @@ describe('AppointmentForm', () => {
     });
 
     it('saves new value when submitted', () => {
-      const today = new Date();
-      const availableTimeSlots = [
-        { startsAt: today.setHours(9, 0, 0, 0) },
-        { startsAt: today.setHours(9, 30, 0, 0) }
-      ];
+      //Warining happend
+
       render(
         <AppointmentForm
-          today={today}
+          customer={customer}
           availableTimeSlots={availableTimeSlots}
+          today={today}
           startsAt={availableTimeSlots[0].startsAt}
-          onSubmit={({ startsAt }) => {
-            expect(startsAt).toEqual(
-              availableTimeSlots[1].startsAt
-            );
-          }}
         />
       );
-      change(startsAtField(1), {
-        target: {
-          value: availableTimeSlots[1].startsAt.toString(),
-          name: 'startsAt'
-        }
-      });
+      change(
+        startsAtField(1),
+        withEvent(
+          'startsAt',
+          availableTimeSlots[1].startsAt.toString()
+        )
+      );
       submit(form('appointment'));
     });
     it('passes the customer id to fetch when submitting', async () => {
