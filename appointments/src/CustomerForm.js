@@ -36,7 +36,7 @@ export const CustomerForm = ({
         required('Phone number is required'),
         match(
           /^[0-9+()\- ]*$/,
-          'Only numbers, spaces and thes symbols are allowed: ( ) + -'
+          'Only numbers, spaces and these symbols are allowed: ( ) + -'
         )
       )
     };
