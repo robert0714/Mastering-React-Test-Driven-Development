@@ -3,18 +3,16 @@ import {
   createShallowRenderer,
   type,
   click,
-  id,
   childrenOf,
-  className
+  className,
+  id
 } from './shallowHelpers';
-import 'whatwg-fetch';
-import { createContainer } from './domManipulators';
-import { fetchResponseOk } from './spyHelpers';
-import { AppointmentsDayViewLoader } from '../src/AppointmentsDayViewLoader';
 import { App } from '../src/App';
-import CustomerForm from '../src/CustomerForm';
+import { AppointmentFormLoader } from '../src/AppointmentFormLoader';
+import { AppointmentsDayViewLoader } from '../src/AppointmentsDayViewLoader';
+import { CustomerForm } from '../src/CustomerForm';
 
-describe.skip('App', () => {
+describe('App', () => {
   let render, elementMatching, child;
   beforeEach(() => {
     ({ render, elementMatching, child } = createShallowRenderer());
@@ -69,8 +67,11 @@ describe.skip('App', () => {
   });
 
   const saveCustomer = customer => {
-    elementMatching(type(CustomerForm)).props.onSave(customer);
+    const element = elementMatching(type(CustomerForm));
+    expect(element).toBeDefined();
+    element.props.onSave(customer);
   };
+
 
   it('displays the AppointmentsDayViewLoader after the CustomerForm is submittted', async () => {
     beginAddingCustomerAndAppointment();
@@ -82,8 +83,10 @@ describe.skip('App', () => {
 
   it('passes the customer to the AppointmentForm', async () => {
     const customer = { id: 123 };
+
     beginAddingCustomerAndAppointment();
     saveCustomer(customer);
+
     expect(
       elementMatching(type(AppointmentFormLoader)).props.customer
     ).toBe(customer);

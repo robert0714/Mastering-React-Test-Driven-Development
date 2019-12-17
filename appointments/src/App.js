@@ -1,30 +1,31 @@
 import React, { useState, useCallback } from 'react';
-import ReactDOM from 'react-dom';
+import { AppointmentFormLoader } from './AppointmentFormLoader';
 import { AppointmentsDayViewLoader } from './AppointmentsDayViewLoader';
-import CustomerForm from './CustomerForm';
+import { CustomerForm } from './CustomerForm';
 
-export const App = ({ today }) => {
+export const App = () => {
   const [view, setView] = useState('dayView');
   const [customer, setCustomer] = useState();
-  const transitionToAddCustomer = useCallback(customer => {
+  const transitionToAddAppointment = useCallback((customer) => {
     setCustomer(customer);
-    setView('addCustomer');
-  }, []);
-  const transitionToAddAppointment = useCallback(() => {
     setView('addAppointment');
   }, []);
-
-  const transitionToDayView = useCallback(
-    () => {
-      setView('dayView')
-    },
-    [],
-  )
+  const transitionToAddCustomer = useCallback( () => {    
+    setView('addCustomer');
+  }, []);
+  const transitionToDayView = useCallback(() => {
+    setView('dayView');
+  }, []);
   switch (view) {
     case 'addCustomer':
       return <CustomerForm onSave={transitionToAddAppointment} />;
     case 'addAppointment':
-      return <AppointmentsDayViewLoader  customer ={customer}  onSave ={transitionToDayView} />;
+      return (
+        <AppointmentFormLoader
+          customer={customer}
+          onSave={transitionToDayView}
+        />
+      );
     default:
       return (
         <React.Fragment>
@@ -36,9 +37,8 @@ export const App = ({ today }) => {
               Add customer and appointment
             </button>
           </div>
-          <AppointmentsDayViewLoader today={today} />
+          <AppointmentsDayViewLoader />
         </React.Fragment>
-      );
-      break;
+      ); 
   }
 };
