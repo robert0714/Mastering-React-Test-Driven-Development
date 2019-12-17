@@ -5,7 +5,9 @@ const Error = () => {
     <div className="error">An error occurred during save.</div>
   );
 };
-const required = value => !value || value.trim() ==='' ? 'First name is required':undefined
+const required = description => value =>
+  !value || value.trim() === '' ? description : undefined;
+
 export const CustomerForm = ({
   firstName,
   lastName,
@@ -19,22 +21,32 @@ export const CustomerForm = ({
   });
   const [error, setError] = useState(false);
   const [valiationErrors, setValiationErrors] = useState({});
+
   const handleBlur = ({ target }) => {
-    const result = required(target.value);
+    const validators = {
+      firstName: required('First name is required'),
+      lastName: required('Last name is required')
+    };
+    const result = validators[target.name](target.value);
     setValiationErrors({
       ...valiationErrors,
-      firstName: result
+      [target.name]: result
     });
   };
-  const hasFirstNameError = () =>
-    valiationErrors.firstName !== undefined;
-  const renderFirstNameError = () => {
-    if (hasFirstNameError()) {
+
+  const hasError = fieldName =>
+    valiationErrors[fieldName] !== undefined;
+
+  const renderError = fieldName => {
+    if (hasError(fieldName)) {
       return (
-        <span className="error">{valiationErrors.firstName}</span>
+        <span className="error">{valiationErrors[fieldName]}</span>
       );
     }
   };
+
+  
+
   const handleChange = ({ target }) => {
     setCustomer(customer => ({
       ...customer,
@@ -68,16 +80,18 @@ export const CustomerForm = ({
         name="firstName"
         id="firstName"
         value={firstName}
-        onBlur= {handleBlur}
+        onBlur={handleBlur}
         onChange={handleChange}></input>
-      {renderFirstNameError()}
+      {renderError('firstName')}
       <label htmlFor="lastName">Last Name</label>
       <input
         type="text"
         name="lastName"
         id="lastName"
         value={lastName}
+        onBlur={handleBlur}
         onChange={handleChange}></input>
+       {renderError('lastName')}
       <label htmlFor="phoneNumber">Phone Number</label>
       <input
         type="text"
