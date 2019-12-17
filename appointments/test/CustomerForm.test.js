@@ -281,13 +281,33 @@ describe('CustomerForm', () => {
           withEvent(fieldName, '')
         );
         expect(element('.error')).not.toBeNull();
-        expect(element('.error').textContent).toMatch(
-          description
-        );
+        expect(element('.error').textContent).toMatch(description);
       });
     };
-    itInvalidatesFieldWithValue('firstName','','First name is required');
-    itInvalidatesFieldWithValue('lastName','','Last name is required');
-    itInvalidatesFieldWithValue('phoneNumber','','Phone number is required');
+    
+
+    itInvalidatesFieldWithValue(
+      'firstName',
+      '',
+      'First name is required'
+    );
+    itInvalidatesFieldWithValue(
+      'lastName',
+      '',
+      'Last name is required'
+    );
+    itInvalidatesFieldWithValue(
+      'phoneNumber',
+      'invalid',
+      'Only numbers, spaces and thes symbols are allowed: ( ) + -'
+    );
+    it('accepts standard phone number characters when validating',()=>{
+      render(<CustomerForm />);
+        blur(
+          element("[name='phoneNumber']"),
+          withEvent('phoneNumber', '0123456789+()- ')
+        );
+        expect(element('.error')).toBeNull();
+    });
   });
 });

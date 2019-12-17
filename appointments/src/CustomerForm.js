@@ -21,12 +21,24 @@ export const CustomerForm = ({
   });
   const [error, setError] = useState(false);
   const [valiationErrors, setValiationErrors] = useState({});
-
+  const match = (re, description) => value =>
+    !value.match(re) ? description : undefined;
+  const list = (...validators) => value =>
+    validators.reduce(
+      (result, validator) => result || validator(value),
+      undefined
+    );
   const handleBlur = ({ target }) => {
     const validators = {
       firstName: required('First name is required'),
       lastName: required('Last name is required'),
-      phoneNumber: required('Phone number is required')
+      phoneNumber: list(
+        required('Phone number is required'),
+        match(
+          /^[0-9+()\- ]*$/,
+          'Only numbers, spaces and thes symbols are allowed: ( ) + -'
+        )
+      )
     };
     const result = validators[target.name](target.value);
     setValiationErrors({
