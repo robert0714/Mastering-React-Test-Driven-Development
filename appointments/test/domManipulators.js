@@ -40,7 +40,8 @@ export const createContainer = () => {
     children ,
     click: simulateEvent('click'),
     change: simulateEvent('change'),
-    submit: simulateEventAndAwait('submit')
+    submit: simulateEventAndAwait('submit'),
+    blur: simulateEvent('blur')
   };
 };
 

@@ -1,16 +1,43 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-const Error = () => {return(
-  <div className="error">An error occurred during save.</div>
-);}
-
-export const CustomerForm = ({ firstName, lastName,phoneNumber, onSave}) => {
-  const [customer, setCustomer] = useState({ firstName, lastName ,phoneNumber });
+const Error = () => {
+  return (
+    <div className="error">An error occurred during save.</div>
+  );
+};
+const required = value => !value || value.trim() ==='' ? 'First name is required':undefined
+export const CustomerForm = ({
+  firstName,
+  lastName,
+  phoneNumber,
+  onSave
+}) => {
+  const [customer, setCustomer] = useState({
+    firstName,
+    lastName,
+    phoneNumber
+  });
   const [error, setError] = useState(false);
-  
-  const handleChange= ({ target }) => {
+  const [valiationErrors, setValiationErrors] = useState({});
+  const handleBlur = ({ target }) => {
+    const result = required(target.value);
+    setValiationErrors({
+      ...valiationErrors,
+      firstName: result
+    });
+  };
+  const hasFirstNameError = () =>
+    valiationErrors.firstName !== undefined;
+  const renderFirstNameError = () => {
+    if (hasFirstNameError()) {
+      return (
+        <span className="error">{valiationErrors.firstName}</span>
+      );
+    }
+  };
+  const handleChange = ({ target }) => {
     setCustomer(customer => ({
-      ...customer, 
+      ...customer,
       [target.name]: target.value
     }));
   };
@@ -30,40 +57,38 @@ export const CustomerForm = ({ firstName, lastName,phoneNumber, onSave}) => {
       setError(true);
     }
   };
-  
+
   return (
     <form id="customer" onSubmit={handleSubmit}>
-       {error ? <Error /> : null}
-       {/* <Error /> */}
+      {error ? <Error /> : null}
+      {/* <Error /> */}
       <label htmlFor="firstName">First Name</label>
       <input
         type="text"
         name="firstName"
         id="firstName"
         value={firstName}
-        onChange={handleChange}
-      ></input>
+        onBlur= {handleBlur}
+        onChange={handleChange}></input>
+      {renderFirstNameError()}
       <label htmlFor="lastName">Last Name</label>
       <input
         type="text"
         name="lastName"
         id="lastName"
         value={lastName}
-        onChange={handleChange}
-      ></input>
+        onChange={handleChange}></input>
       <label htmlFor="phoneNumber">Phone Number</label>
       <input
         type="text"
         name="phoneNumber"
         id="phoneNumber"
         value={phoneNumber}
-        onChange={handleChange}
-      ></input>
+        onChange={handleChange}></input>
       <input type="submit" value="Add" />
     </form>
   );
 };
-
 
 // CustomerForm.defaultProps ={
 //   fetch: async () => {}
