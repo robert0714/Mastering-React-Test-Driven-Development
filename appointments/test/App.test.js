@@ -72,12 +72,11 @@ describe('App', () => {
     element.props.onSave(customer);
   };
 
-
-  it('displays the AppointmentsDayViewLoader after the CustomerForm is submittted', async () => {
+  it('displays the AppointmentFormLoader after the CustomerForm is submittted', async () => {
     beginAddingCustomerAndAppointment();
     saveCustomer();
     expect(
-      elementMatching(type(AppointmentsDayViewLoader))
+      elementMatching(type(AppointmentFormLoader))
     ).toBeDefined();
   });
 
@@ -92,15 +91,14 @@ describe('App', () => {
     ).toBe(customer);
   });
 
-  const saveAppointment = () => {
-    elementMatching(
-      type(AppointmentsDayViewLoader).props.onSave()
-    );
-  };
-  it('renders AppointmentsDayViewLoader after AppointmentForm is submitted', async () => {
+  const saveAppointment = () =>
+    elementMatching(type(AppointmentFormLoader)).props.onSave();
+
+  it('renders AppointmentDayViewLoader after AppointmentForm is submitted', async () => {
     beginAddingCustomerAndAppointment();
     saveCustomer();
     saveAppointment();
+
     expect(
       elementMatching(type(AppointmentsDayViewLoader))
     ).toBeDefined();
