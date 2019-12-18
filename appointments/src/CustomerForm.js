@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { required, match, list ,hasError ,validateMany ,anyErrors } from './formValidation';
+import {
+  required,
+  match,
+  list,
+  hasError,
+  validateMany,
+  anyErrors
+} from './formValidation';
 
 const Error = () => {
   return (
@@ -20,6 +27,7 @@ export const CustomerForm = ({
   });
 
   const [error, setError] = useState(false);
+  const [submmitting, setSubmmitting] = useState(false);
   const [valiationErrors, setValidationErrors] = useState({});
   const validators = {
     firstName: required('First name is required'),
@@ -45,9 +53,8 @@ export const CustomerForm = ({
 
     setValidationErrors({
       ...valiationErrors,
-       ...result
+      ...result
     });
-    
   };
 
   const renderError = fieldName => {
@@ -69,17 +76,19 @@ export const CustomerForm = ({
     e.preventDefault();
     const validationResult = validateMany(validators, customer);
     if (!anyErrors(validationResult)) {
+      setSubmmitting(true);
       const result = await window.fetch('/customers', {
         method: 'POST',
         credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(customer)
       });
+      setSubmmitting(false);
       if (result.ok) {
         setError(false);
         const customerWithId = await result.json();
         onSave(customerWithId);
-      } else if (result.status === 422 ){
+      } else if (result.status === 422) {
         const response = await result.json();
         setValidationErrors(response.errors);
       } else {
@@ -121,6 +130,7 @@ export const CustomerForm = ({
         onChange={handleChange}></input>
       {renderError('phoneNumber')}
       <input type="submit" value="Add" />
+      <span  className ="submittingIndicator" ></span>
     </form>
   );
 };

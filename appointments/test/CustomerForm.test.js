@@ -8,6 +8,7 @@ import {
   requestBodyOf
 } from './spyHelpers';
 import 'whatwg-fetch';
+import ReactTestUtils, { act } from 'react-dom/test-utils';
 
 describe('CustomerForm', () => {
   const originalFetch = window.fetch;
@@ -356,6 +357,16 @@ describe('CustomerForm', () => {
       await submit(form('customer'));
       expect(window.fetch).not.toHaveBeenCalled();
       expect(element('.error')).not.toBeNull();
+    });
+
+    it('displays indicator when the form is submitting', async () => {
+      render(<CustomerForm {...validCustomer} />);
+      act(() =>{
+        ReactTestUtils.Simulate.submit(form('customer'));        
+      });
+      await act(async () =>{
+        expect (element('span.submittingIndicator')).not.toBeNull();
+      });
     });
   });
 });
