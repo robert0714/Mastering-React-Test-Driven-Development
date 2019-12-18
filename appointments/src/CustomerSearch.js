@@ -19,20 +19,14 @@ export const CustomerSearch = () => {
   const handleNext = useCallback(() => {
     const after = customers[customers.length - 1].id;
     const url = `/customers?after=${after}`;
-    // const request = {
-    //   method: 'GET',
-    //   credentials: 'same-origin',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // };
-    window.fetch(url, {
+    const request = {
       method: 'GET',
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
       }
-    });
+    };
+    window.fetch(url, request);
   }, [customers]);
   useEffect(() => {
     const fetchData = async () => {
