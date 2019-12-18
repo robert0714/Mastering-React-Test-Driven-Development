@@ -91,8 +91,8 @@ describe('CustomerForm', () => {
     it('saves existing value when submitted', async () => {
       // const fetchSpy = spy();
       render(
-        <CustomerForm 
-          {...validCustomer} 
+        <CustomerForm
+          {...validCustomer}
           {...{ [fieldName]: valueName }}
           // fetch={fetchSpy.fn}
           // onSubmit={() => {}}
@@ -113,7 +113,7 @@ describe('CustomerForm', () => {
       // const fetchSpy = spy();
       render(
         <CustomerForm
-          {...validCustomer} 
+          {...validCustomer}
           {...{ [fieldName]: valueName }}
           // onSubmit={props =>
           //   expect(props[fieldName]).toEqual(valueName)
@@ -147,7 +147,15 @@ describe('CustomerForm', () => {
       });
     });
   };
-
+  it('renders a field validation errors from server', async () => {
+    const errors = {
+      phoneNaumber: 'Phone number already exists in the system'
+    };
+    window.fetch.mockReturnValue(fetchResponseError(442 ,{errors}));
+    render(<CustomerForm  {...validCustomer }  />);
+    await submit(form('customer'));
+    expect(element('.error').textContent).toMatch(errors.phoneNaumber);
+  });
   it('renders a form', () => {
     render(<CustomerForm />);
     expect(form('customer')).not.toBeNull();
@@ -208,12 +216,12 @@ describe('CustomerForm', () => {
       })
     );
   });
-  it ('notifies onSave when form is submitted', async () => {
+  it('notifies onSave when form is submitted', async () => {
     const customer = { id: 123 };
     window.fetch.mockReturnValue(fetchResponseOk(customer));
     const saveSpy = jest.fn();
 
-    render(<CustomerForm    {...validCustomer}  onSave={saveSpy}  />);
+    render(<CustomerForm {...validCustomer} onSave={saveSpy} />);
     // await act(async () => {
     //   ReactTestUtils.Simulate.submit(form('customer'));
     // });
@@ -251,7 +259,7 @@ describe('CustomerForm', () => {
   it('renders a error message when fetch call fails', async () => {
     window.fetch.mockReturnValue(fetchResponseError());
     // fetchSpy.stubReturnValue(Promise.resolve({ ok: false}));
-    render(<CustomerForm    {...validCustomer}  />);
+    render(<CustomerForm {...validCustomer} />);
     // await act(async () => {
     //   ReactTestUtils.Simulate.submit(form('customer'));
     // });
@@ -269,7 +277,7 @@ describe('CustomerForm', () => {
     window.fetch.mockReturnValueOnce(fetchResponseError());
     window.fetch.mockReturnValue(fetchResponseOk());
 
-    render(<CustomerForm   {...validCustomer}  />);
+    render(<CustomerForm {...validCustomer} />);
     await submit(form('customer'));
     // await act(async () => {
     //   ReactTestUtils.Simulate.submit(form('customer'));

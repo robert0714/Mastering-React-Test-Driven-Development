@@ -1,6 +1,7 @@
-export const fetchResponseOk = body =>
+export const fetchResponseOk = (status = 500,body ={}) =>
   Promise.resolve({
     ok: true,
+    status ,
     json: () => Promise.resolve(body)
   });
 
