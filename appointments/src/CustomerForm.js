@@ -18,7 +18,7 @@ export const CustomerForm = ({
     phoneNumber
   });
   const [error, setError] = useState(false);
-  const [valiationErrors, setValiationErrors] = useState({});
+  const [valiationErrors, setValidationErrors] = useState({});
 
   const required = description => value =>
     !value || value.trim() === '' ? description : undefined;
@@ -54,7 +54,7 @@ export const CustomerForm = ({
   };
   const handleBlur = ({ target }) => {
     const result = validators[target.name](target.value);
-    setValiationErrors({
+    setValidationErrors({
       ...valiationErrors,
       [target.name]: result
     });
@@ -77,10 +77,10 @@ export const CustomerForm = ({
       [target.name]: target.value
     }));
   };
+
   const handleSubmit = async e => {
     e.preventDefault();
     const validationResult = validateMany(customer);
-
     if (!anyErrors(validationResult)) {
       const result = await window.fetch('/customers', {
         method: 'POST',
@@ -88,7 +88,6 @@ export const CustomerForm = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(customer)
       });
-
       if (result.ok) {
         setError(false);
         const customerWithId = await result.json();
@@ -97,8 +96,7 @@ export const CustomerForm = ({
         setError(true);
       }
     } else {
-      setError(true);
-      setValiationErrors(validationResult);
+      setValidationErrors(validationResult);      
     }
   };
 
