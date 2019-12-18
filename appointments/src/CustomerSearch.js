@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-export const CustomerRow = ({ customer }) => (<tr>
-<td>{customer.firstName}</td>
-<td>{customer.lastName}</td>
-<td>{customer.phoneNumber}</td>
-</tr>);
+export const CustomerRow = ({ customer }) => (
+  <tr>
+    <td>{customer.firstName}</td>
+    <td>{customer.lastName}</td>
+    <td>{customer.phoneNumber}</td>
+  </tr>
+);
 export const CustomerSearch = () => {
   const [customer, setCustomers] = useState([]);
   useEffect(() => {
@@ -31,9 +33,9 @@ export const CustomerSearch = () => {
         </tr>
       </thead>
       <tbody>
-        {customer[0] ? (
-          <CustomerRow customer={customer[0]} />
-        ) : null}
+        {customer.map(customer => (
+          <CustomerRow customer={customer} key={customer.id} />
+        ))}
       </tbody>
     </table>
   );

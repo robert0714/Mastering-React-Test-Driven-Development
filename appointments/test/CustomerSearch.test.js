@@ -52,18 +52,18 @@ describe('CustomerSearch', () => {
       }
     });
   });
-   
+
   it('renders a table with four headings', async () => {
     await renderAndWait(<CustomerSearch />);
     const headings = elements('table th');
     expect(headings).toBeDefined();
     expect(headings.length).toEqual(4);
     expect(headings.map(h => h.textContent)).toEqual([
-        'First name',
-        'Last name',
-        'Phone number',
-        'Actions'
-      ]);
+      'First name',
+      'Last name',
+      'Phone number',
+      'Actions'
+    ]);
   });
   const oneCustomer = [
     {
@@ -78,9 +78,33 @@ describe('CustomerSearch', () => {
     await renderAndWait(<CustomerSearch />);
     const columns = elements('table tbody tr  td');
     expect(columns).toBeDefined();
-    expect(columns.length).toEqual(3);    
+    expect(columns.length).toEqual(3);
     expect(columns[0].textContent).toEqual('A');
     expect(columns[1].textContent).toEqual('B');
     expect(columns[2].textContent).toEqual('1');
+  });
+  const twoCustomer = [
+    {
+      id: 1,
+      firstName: 'A',
+      lastName: 'B',
+      phoneNumber: '1'
+    },
+    {
+      id: 2,
+      firstName: 'C',
+      lastName: 'D',
+      phoneNumber: '2'
+    }
+  ];
+  it.only('renders multiple customer rows', async () => {
+    window.fetch.mockReturnValue(fetchResponseOk(twoCustomer));
+    await renderAndWait(<CustomerSearch />);
+    const rows = elements('table tbody tr');
+    expect(rows).toBeDefined();
+    expect(rows.length).toEqual(2); 
+    expect(rows[1].childNodes[0].textContent).toEqual('C');
+    expect(rows[1].childNodes[1].textContent).toEqual('D');
+    expect(rows[1].childNodes[2].textContent).toEqual('2');
   });
 });
