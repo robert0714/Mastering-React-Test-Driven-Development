@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 const CustomerRow = ({ customer }) => (
   <tr>
     <td>{customer.firstName}</td>
@@ -6,16 +6,34 @@ const CustomerRow = ({ customer }) => (
     <td>{customer.phoneNumber}</td>
   </tr>
 );
-const SearchButtons = () => (
+const SearchButtons = ({ handleNext }) => (
   <div className="button-bar">
-    <button role="button" id="next-page">
+    <button role="button" id="next-page" onClick={handleNext}>
       Next
     </button>
   </div>
 );
 
 export const CustomerSearch = () => {
-  const [customer, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const handleNext = useCallback(() => {
+    const after = customers[customers.length - 1].id;
+    const url = `/customers?after=${after}`;
+    // const request = {
+    //   method: 'GET',
+    //   credentials: 'same-origin',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // };
+    window.fetch(url, {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }, [customers]);
   useEffect(() => {
     const fetchData = async () => {
       const result = await window.fetch('/customers', {
@@ -32,7 +50,7 @@ export const CustomerSearch = () => {
   }, []);
   return (
     <React.Fragment>
-      <SearchButtons />
+      <SearchButtons handleNext={handleNext} />
       <table>
         <thead>
           <tr>
@@ -43,8 +61,8 @@ export const CustomerSearch = () => {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(customer)
-            ? customer.map(customer => (
+          {Array.isArray(customers)
+            ? customers.map(customer => (
                 <CustomerRow
                   customer={customer}
                   key={customer.id}

@@ -21,7 +21,7 @@ describe('CustomerSearch', () => {
     elements,
     change,
     submit,
-    blur;
+    clickAndWait;
 
   beforeEach(() => {
     ({
@@ -35,7 +35,7 @@ describe('CustomerSearch', () => {
       elements,
       change,
       submit,
-      blur
+      clickAndWait
     } = createContainer());
 
     jest
@@ -108,7 +108,19 @@ describe('CustomerSearch', () => {
     expect(rows[1].childNodes[2].textContent).toEqual('2');
   });
   it('has a next button', async () => {
-      await renderAndWait(<CustomerSearch />);
-      expect(element('button#next-page')).not.toBeNull();
+    await renderAndWait(<CustomerSearch />);
+    expect(element('button#next-page')).not.toBeNull();
+  });
+  const tenCustomers = Array.from('0123456789', id => ({ id }));
+  it('requests next page of data when next button is clicked', async () => {
+    window.fetch.mockReturnValue(fetchResponseOk(tenCustomers));
+    await renderAndWait(<CustomerSearch />);
+    // expect(element('button#next-page')).not.toBeNull();
+    await clickAndWait(element('button#next-page'));
+
+    expect(window.fetch).toHaveBeenCalledWith(
+      '/customers?after=9',
+      expect.anything()
+    );
   });
 });
