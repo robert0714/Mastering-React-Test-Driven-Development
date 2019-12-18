@@ -129,7 +129,7 @@ export const CustomerForm = ({
         onBlur={handleBlur}
         onChange={handleChange}></input>
       {renderError('phoneNumber')}
-      <input type="submit" value="Add" />
+      <input type="submit" value="Add"   />
       {submmitting ? (
         <span className="submittingIndicator"></span>
       ) : null}

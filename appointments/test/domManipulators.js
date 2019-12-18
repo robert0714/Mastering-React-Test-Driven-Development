@@ -9,7 +9,7 @@ export const createContainer = () => {
     container.querySelector(`label[for="${formElement}"]`);
   const element = selector => container.querySelector(selector);
   const elements = selector =>
-    container.querySelectorAll(selector);
+    Array.from(container.querySelectorAll(selector));
 
   const simulateEvent = eventName => (element, eventData) =>
     ReactTestUtils.Simulate[eventName](element, eventData);
