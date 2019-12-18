@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-export const CustomerRow = ({ customer }) => (
+const CustomerRow = ({ customer }) => (
   <tr>
     <td>{customer.firstName}</td>
     <td>{customer.lastName}</td>
@@ -33,9 +33,11 @@ export const CustomerSearch = () => {
         </tr>
       </thead>
       <tbody>
-        {customer.map(customer => (
-          <CustomerRow customer={customer} key={customer.id} />
-        ))}
+        {Array.isArray(customer)
+          ? customer.map(customer => (
+              <CustomerRow customer={customer} key={customer.id} />
+            ))
+          : null}
       </tbody>
     </table>
   );

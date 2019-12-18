@@ -97,7 +97,7 @@ describe('CustomerSearch', () => {
       phoneNumber: '2'
     }
   ];
-  it.only('renders multiple customer rows', async () => {
+  it('renders multiple customer rows', async () => {
     window.fetch.mockReturnValue(fetchResponseOk(twoCustomer));
     await renderAndWait(<CustomerSearch />);
     const rows = elements('table tbody tr');
