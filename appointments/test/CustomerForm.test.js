@@ -361,12 +361,34 @@ describe('CustomerForm', () => {
 
     it('displays indicator when the form is submitting', async () => {
       render(<CustomerForm {...validCustomer} />);
-      act(() =>{
-        ReactTestUtils.Simulate.submit(form('customer'));        
+      act(() => {
+        ReactTestUtils.Simulate.submit(form('customer'));
       });
-      await act(async () =>{
-        expect (element('span.submittingIndicator')).not.toBeNull();
+      await act(async () => {
+        expect(element('span.submittingIndicator')).not.toBeNull();
       });
+    });
+    it('initially does not displays submitting indicator', async () => {
+      render(<CustomerForm {...validCustomer} />);
+      expect(element('.submittingIndicator')).toBeNull();
+      act(() => {
+        ReactTestUtils.Simulate.submit(form('customer'));
+      });
+      await act(async () => {
+        expect(element('span.submittingIndicator')).not.toBeNull();
+      });
+    });
+    it('hides indicator when form has submitted', async () => {
+      render(<CustomerForm {...validCustomer} />);
+      expect(element('.submittingIndicator')).toBeNull();
+      act(() => {
+        ReactTestUtils.Simulate.submit(form('customer'));
+      });
+      // await act(async () => {
+      //   expect(element('span.submittingIndicator')).not.toBeNull();
+      // });
+      await submit(form('customer'));
+      expect(element('.submittingIndicator')).toBeNull();
     });
   });
 });

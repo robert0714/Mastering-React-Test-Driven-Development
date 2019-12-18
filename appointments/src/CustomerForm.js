@@ -130,7 +130,9 @@ export const CustomerForm = ({
         onChange={handleChange}></input>
       {renderError('phoneNumber')}
       <input type="submit" value="Add" />
-      <span  className ="submittingIndicator" ></span>
+      {submmitting ? (
+        <span className="submittingIndicator"></span>
+      ) : null}
     </form>
   );
 };
