@@ -147,14 +147,18 @@ describe('CustomerForm', () => {
       });
     });
   };
-  it('renders a field validation errors from server', async () => {
+  it('renders field validation errors from server', async () => {
     const errors = {
-      phoneNaumber: 'Phone number already exists in the system'
+      phoneNumber: 'Phone number already exists in the system'
     };
-    window.fetch.mockReturnValue(fetchResponseError(442 ,{errors}));
-    render(<CustomerForm  {...validCustomer }  />);
+    window.fetch.mockReturnValue(
+      fetchResponseError(422, { errors })
+    );
+    render(<CustomerForm {...validCustomer} />);
     await submit(form('customer'));
-    expect(element('.error').textContent).toMatch(errors.phoneNaumber);
+    expect(element('.error').textContent).toMatch(
+      errors.phoneNumber
+    );
   });
   it('renders a form', () => {
     render(<CustomerForm />);

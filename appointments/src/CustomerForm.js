@@ -79,7 +79,7 @@ export const CustomerForm = ({
         setError(false);
         const customerWithId = await result.json();
         onSave(customerWithId);
-      } else if (result.status === 442 ){
+      } else if (result.status === 422 ){
         const response = await result.json();
         setValidationErrors(response.errors);
       } else {
