@@ -6,6 +6,14 @@ const CustomerRow = ({ customer }) => (
     <td>{customer.phoneNumber}</td>
   </tr>
 );
+const SearchButtons = () => (
+  <div className="button-bar">
+    <button role="button" id="next-page">
+      Next
+    </button>
+  </div>
+);
+
 export const CustomerSearch = () => {
   const [customer, setCustomers] = useState([]);
   useEffect(() => {
@@ -23,22 +31,28 @@ export const CustomerSearch = () => {
     fetchData();
   }, []);
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Phone number</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Array.isArray(customer)
-          ? customer.map(customer => (
-              <CustomerRow customer={customer} key={customer.id} />
-            ))
-          : null}
-      </tbody>
-    </table>
+    <React.Fragment>
+      <SearchButtons />
+      <table>
+        <thead>
+          <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Phone number</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.isArray(customer)
+            ? customer.map(customer => (
+                <CustomerRow
+                  customer={customer}
+                  key={customer.id}
+                />
+              ))
+            : null}
+        </tbody>
+      </table>
+    </React.Fragment>
   );
 };

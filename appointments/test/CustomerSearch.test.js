@@ -102,9 +102,13 @@ describe('CustomerSearch', () => {
     await renderAndWait(<CustomerSearch />);
     const rows = elements('table tbody tr');
     expect(rows).toBeDefined();
-    expect(rows.length).toEqual(2); 
+    expect(rows.length).toEqual(2);
     expect(rows[1].childNodes[0].textContent).toEqual('C');
     expect(rows[1].childNodes[1].textContent).toEqual('D');
     expect(rows[1].childNodes[2].textContent).toEqual('2');
+  });
+  it('has a next button', async () => {
+      await renderAndWait(<CustomerSearch />);
+      expect(element('button#next-page')).not.toBeNull();
   });
 });
