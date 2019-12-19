@@ -56,7 +56,9 @@ export const CustomerSearch = () => {
     const fetchData = async () => {
       let queryString = '';
 
-      if (searchTerm !== '') {
+      if (queryStrings.length > 0 && searchTerm !== '') {
+        queryString = queryStrings[queryStrings.length - 1] +'&searchTerm='+searchTerm;
+      } else if (searchTerm !== '') {
         queryString = `?searchTerm=${searchTerm}`;
       } else if (queryStrings.length > 0) {
         queryString = queryStrings[queryStrings.length - 1];
@@ -68,7 +70,7 @@ export const CustomerSearch = () => {
       setCustomers(await result.json());
     };
     fetchData();
-  }, [queryStrings,searchTerm]);
+  }, [queryStrings, searchTerm]);
   return (
     <React.Fragment>
       <input
@@ -80,7 +82,6 @@ export const CustomerSearch = () => {
         handleNext={handleNext}
         handlePrevious={handlePrevious}
       />
-       
 
       <table>
         <thead>

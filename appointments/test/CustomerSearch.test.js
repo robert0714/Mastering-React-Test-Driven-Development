@@ -184,9 +184,26 @@ describe('CustomerSearch', () => {
   });
   it('performs search when search term is changed', async () => {
     await renderAndWait(<CustomerSearch />);
-    await changeAndWait(element('input'), withEvent('input', 'robert1'));
+    await changeAndWait(
+      element('input'),
+      withEvent('input', 'robert1')
+    );
     expect(window.fetch).toHaveBeenLastCalledWith(
       '/customers?searchTerm=robert1',
+      expect.anything()
+    );
+  });
+  it('includes search term when moving to next page', async () => {
+    window.fetch.mockReturnValue(fetchResponseOk(tenCustomers));
+    await renderAndWait(<CustomerSearch />);
+    await changeAndWait(
+      element('input'),
+      withEvent('input', 'pamela')
+    );
+    await clickAndWait(element('button#next-page'));
+    
+    expect(window.fetch).toHaveBeenLastCalledWith(
+      '/customers/customers?after=9&searchTerm=pamela',
       expect.anything()
     );
   });
