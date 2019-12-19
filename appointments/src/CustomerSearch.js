@@ -16,7 +16,7 @@ const SearchButtons = ({ handleNext }) => (
 
 export const CustomerSearch = () => {
   const [customers, setCustomers] = useState([]);
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     const after = customers[customers.length - 1].id;
     const url = `/customers?after=${after}`;
     const request = {
@@ -26,7 +26,8 @@ export const CustomerSearch = () => {
         'Content-Type': 'application/json'
       }
     };
-    window.fetch(url, request);
+    const result = await window.fetch(url, request);
+    setCustomers(await result.json());
   }, [customers]);
   useEffect(() => {
     const fetchData = async () => {

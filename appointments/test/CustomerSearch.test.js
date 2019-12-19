@@ -126,12 +126,12 @@ describe('CustomerSearch', () => {
   it('displays next page of data when next button is clicked', async () => {
     const nextCustomer = [{ id: 'next', firstName: 'Next' }];
     window.fetch
-      .mockReturnValue(fetchResponseOk(tenCustomers))
+      .mockReturnValueOnce(fetchResponseOk(tenCustomers))
       .mockReturnValue(fetchResponseOk(nextCustomer));
-    
-    await renderAndWait(<CustomerSearch />) ;
+    // window.fetch 
+    //   .mockReturnValueOnce(fetchResponseOk(nextCustomer));
+    await renderAndWait(<CustomerSearch />);
     await clickAndWait(element('button#next-page'));
-
     expect(elements('tbody tr').length).toEqual(1);
     expect(elements('td')[0].textContent).toEqual('Next');
   });
