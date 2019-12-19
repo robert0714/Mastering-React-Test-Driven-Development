@@ -28,19 +28,35 @@ const request = {
 };
 export const CustomerSearch = () => {
   const [customers, setCustomers] = useState([]);
-  const [queryString, setQueryString] = useState('');
-  const handleNext = useCallback(async () => {
-    const after = customers[customers.length - 1].id;
-    const newQueryString = `/customers?after=${after}`;
-    setQueryString(newQueryString);
-    const result = await window.fetch(newQueryString, request);
-    setCustomers(await result.json());
-  }, [customers]);
+  // const [queryString, setQueryString] = useState('');
+  const [queryStrings, setQueryStrings] = useState([]);
+  const [previousQueryString, setPreviousQueryString] = useState(
+    ''
+  );
+
+  const handleNext = useCallback(
+    async queryString => {
+      const after = customers[customers.length - 1].id;
+      const newQueryString = `/customers?after=${after}`;
+      setPreviousQueryString(queryString);
+      setQueryStrings([...queryStrings, newQueryString]);
+      const result = await window.fetch(newQueryString, request);
+      setCustomers(await result.json());
+    },
+    [customers,queryString]
+  );
+
   const handlePrevious = useCallback(() => {
-    setQueryString('');
-  }, []);
+    setQueryString(previousQueryString);
+    setQueryStrings(queryStrings.slice(0,-1));
+  }, [queryStrings]);
+
   useEffect(() => {
     const fetchData = async () => {
+      let queryString = '';
+      if (queryStrings.length > 0) {
+        queryString = queryStrings[queryStrings.length - 1];
+      }
       const result = await window.fetch(
         `/customers${queryString}`,
         request
@@ -48,10 +64,13 @@ export const CustomerSearch = () => {
       setCustomers(await result.json());
     };
     fetchData();
-  }, [queryString]);
+  }, [queryStrings]);
   return (
     <React.Fragment>
-      <SearchButtons handleNext={handleNext} handlePrevious={handlePrevious} />
+      <SearchButtons
+        handleNext={handleNext}
+        handlePrevious={handlePrevious}
+      />
       <table>
         <thead>
           <tr>
