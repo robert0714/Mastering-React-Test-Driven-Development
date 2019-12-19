@@ -21,7 +21,8 @@ describe('CustomerSearch', () => {
     elements,
     change,
     submit,
-    clickAndWait;
+    clickAndWait,
+    changeAndWait;
 
   beforeEach(() => {
     ({
@@ -35,7 +36,8 @@ describe('CustomerSearch', () => {
       elements,
       change,
       submit,
-      clickAndWait
+      clickAndWait,
+      changeAndWait
     } = createContainer());
 
     jest
@@ -157,17 +159,27 @@ describe('CustomerSearch', () => {
   const anotherCustomers = Array.from('ABCDEFGHIJ', id => ({
     id
   }));
-  if('move back one page when clicking previous after multiple clicks of the next button', async()=>{
-    window.fetch
-      .mockReturnValueOnce(fetchResponseOk(tenCustomers))
-      .mockReturnValue(fetchResponseOk(anotherCustomers));    
-    await renderAndWait(<CustomerSearch />);
-    await clickAndWait(element('button#next-page'));
-    await clickAndWait(element('button#next-page'));
-    await clickAndWait(element('button#previous-page'));
-    expect(window.fetch).toHaveBeenCalledWith(
+  if (
+    ('move back one page when clicking previous after multiple clicks of the next button',
+    async () => {
+      window.fetch
+        .mockReturnValueOnce(fetchResponseOk(tenCustomers))
+        .mockReturnValue(fetchResponseOk(anotherCustomers));
+      await renderAndWait(<CustomerSearch />);
+      await clickAndWait(element('button#next-page'));
+      await clickAndWait(element('button#next-page'));
+      await clickAndWait(element('button#previous-page'));
+      expect(window.fetch).toHaveBeenCalledWith(
         '/customers?after=9',
         expect.anything()
       );
+    })
+  );
+  it('has a search input field with a placeholder', async () => {
+    await renderAndWait(<CustomerSearch />);
+    expect(element('input')).not.toBeNull();
+    expect(element('input').getAttribute('placeholder')).toEqual(
+      'Enter filter text'
+    );
   });
 });

@@ -70,6 +70,7 @@ export const CustomerSearch = () => {
         handleNext={handleNext}
         handlePrevious={handlePrevious}
       />
+      <input placeholder="Enter filter text"  />
       <table>
         <thead>
           <tr>
