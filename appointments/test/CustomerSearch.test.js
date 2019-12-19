@@ -128,7 +128,7 @@ describe('CustomerSearch', () => {
     window.fetch
       .mockReturnValueOnce(fetchResponseOk(tenCustomers))
       .mockReturnValue(fetchResponseOk(nextCustomer));
-    // window.fetch 
+    // window.fetch
     //   .mockReturnValueOnce(fetchResponseOk(nextCustomer));
     await renderAndWait(<CustomerSearch />);
     await clickAndWait(element('button#next-page'));
@@ -138,5 +138,20 @@ describe('CustomerSearch', () => {
   it('has a previous button', async () => {
     await renderAndWait(<CustomerSearch />);
     expect(element('button#previous-page')).not.toBeNull();
+  });
+  it('moves back to first page when previous button is clicked', async () => {
+    window.fetch.mockReturnValue(fetchResponseOk(tenCustomers));
+    await renderAndWait(<CustomerSearch />);
+    await clickAndWait(element('button#next-page'));
+
+    expect(window.fetch).toHaveBeenCalledWith(
+      '/customers?after=9',
+      expect.anything()
+    );
+    await clickAndWait(element('button#previous-page'));
+    expect(window.fetch).toHaveBeenLastCalledWith(
+        '/customers',
+        expect.anything()
+      );
   });
 });

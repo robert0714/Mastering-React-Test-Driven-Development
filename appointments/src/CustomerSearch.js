@@ -6,9 +6,12 @@ const CustomerRow = ({ customer }) => (
     <td>{customer.phoneNumber}</td>
   </tr>
 );
-const SearchButtons = ({ handleNext ,handlePrevious }) => (
+const SearchButtons = ({ handleNext, handlePrevious }) => (
   <div className="button-bar">
-    <button role="button" id="previous-page" onClick={handlePrevious}>
+    <button
+      role="button"
+      id="previous-page"
+      onClick={handlePrevious}>
       Previous
     </button>
     <button role="button" id="next-page" onClick={handleNext}>
@@ -21,27 +24,34 @@ const request = {
   credentials: 'same-origin',
   headers: {
     'Content-Type': 'application/json'
-  }};
+  }
+};
 export const CustomerSearch = () => {
   const [customers, setCustomers] = useState([]);
-  const [queryString ,setQueryString] =useState('');
+  const [queryString, setQueryString] = useState('');
   const handleNext = useCallback(async () => {
     const after = customers[customers.length - 1].id;
-    const newQueryString = `/customers?after=${after}`;     
+    const newQueryString = `/customers?after=${after}`;
     setQueryString(newQueryString);
     const result = await window.fetch(newQueryString, request);
     setCustomers(await result.json());
   }, [customers]);
+  const handlePrevious = useCallback(() => {
+    setQueryString('');
+  }, []);
   useEffect(() => {
-    const fetchData = async () => { 
-      const result = await window.fetch(`/customers${queryString}`, request);
+    const fetchData = async () => {
+      const result = await window.fetch(
+        `/customers${queryString}`,
+        request
+      );
       setCustomers(await result.json());
     };
     fetchData();
   }, [queryString]);
   return (
     <React.Fragment>
-      <SearchButtons handleNext={handleNext} />
+      <SearchButtons handleNext={handleNext} handlePrevious={handlePrevious} />
       <table>
         <thead>
           <tr>
