@@ -43,11 +43,10 @@ export const CustomerSearch = () => {
       const result = await window.fetch(newQueryString, request);
       setCustomers(await result.json());
     },
-    [customers,queryString]
+    [customers,queryStrings]
   );
 
-  const handlePrevious = useCallback(() => {
-    setQueryString(previousQueryString);
+  const handlePrevious = useCallback(() => {    
     setQueryStrings(queryStrings.slice(0,-1));
   }, [queryStrings]);
 
