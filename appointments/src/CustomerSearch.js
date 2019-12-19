@@ -13,36 +13,29 @@ const SearchButtons = ({ handleNext }) => (
     </button>
   </div>
 );
-
+const request = {
+  method: 'GET',
+  credentials: 'same-origin',
+  headers: {
+    'Content-Type': 'application/json'
+  }};
 export const CustomerSearch = () => {
   const [customers, setCustomers] = useState([]);
+  const [queryString ,setQueryString] =useState('');
   const handleNext = useCallback(async () => {
     const after = customers[customers.length - 1].id;
-    const url = `/customers?after=${after}`;
-    const request = {
-      method: 'GET',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-    const result = await window.fetch(url, request);
+    const newQueryString = `/customers?after=${after}`;     
+    setQueryString(newQueryString);
+    const result = await window.fetch(newQueryString, request);
     setCustomers(await result.json());
   }, [customers]);
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await window.fetch('/customers', {
-        method: 'GET',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+    const fetchData = async () => { 
+      const result = await window.fetch(`/customers${queryString}`, request);
       setCustomers(await result.json());
     };
-
     fetchData();
-  }, []);
+  }, [queryString]);
   return (
     <React.Fragment>
       <SearchButtons handleNext={handleNext} />
