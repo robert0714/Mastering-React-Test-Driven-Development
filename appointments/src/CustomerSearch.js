@@ -6,8 +6,11 @@ const CustomerRow = ({ customer }) => (
     <td>{customer.phoneNumber}</td>
   </tr>
 );
-const SearchButtons = ({ handleNext }) => (
+const SearchButtons = ({ handleNext ,handlePrevious }) => (
   <div className="button-bar">
+    <button role="button" id="previous-page" onClick={handlePrevious}>
+      Previous
+    </button>
     <button role="button" id="next-page" onClick={handleNext}>
       Next
     </button>

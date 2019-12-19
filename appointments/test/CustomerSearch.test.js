@@ -135,4 +135,8 @@ describe('CustomerSearch', () => {
     expect(elements('tbody tr').length).toEqual(1);
     expect(elements('td')[0].textContent).toEqual('Next');
   });
+  it('has a previous button', async () => {
+    await renderAndWait(<CustomerSearch />);
+    expect(element('button#previous-page')).not.toBeNull();
+  });
 });
