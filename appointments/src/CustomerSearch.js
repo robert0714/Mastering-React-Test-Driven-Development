@@ -28,11 +28,13 @@ const request = {
 };
 export const CustomerSearch = () => {
   const [customers, setCustomers] = useState([]);
-  // const [queryString, setQueryString] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [queryStrings, setQueryStrings] = useState([]);
   const [previousQueryString, setPreviousQueryString] = useState(
     ''
   );
+  const handleSearchTextChanged = ({ target: { value } }) =>
+    setSearchTerm(value);
 
   const handleNext = useCallback(
     async queryString => {
@@ -43,17 +45,20 @@ export const CustomerSearch = () => {
       const result = await window.fetch(newQueryString, request);
       setCustomers(await result.json());
     },
-    [customers,queryStrings]
+    [customers, queryStrings]
   );
 
-  const handlePrevious = useCallback(() => {    
-    setQueryStrings(queryStrings.slice(0,-1));
+  const handlePrevious = useCallback(() => {
+    setQueryStrings(queryStrings.slice(0, -1));
   }, [queryStrings]);
 
   useEffect(() => {
     const fetchData = async () => {
       let queryString = '';
-      if (queryStrings.length > 0) {
+
+      if (searchTerm !== '') {
+        queryString = `?searchTerm=${searchTerm}`;
+      } else if (queryStrings.length > 0) {
         queryString = queryStrings[queryStrings.length - 1];
       }
       const result = await window.fetch(
@@ -63,14 +68,20 @@ export const CustomerSearch = () => {
       setCustomers(await result.json());
     };
     fetchData();
-  }, [queryStrings]);
+  }, [queryStrings,searchTerm]);
   return (
     <React.Fragment>
+      <input
+        value={searchTerm}
+        onChange={handleSearchTextChanged}
+        placeholder="Enter filter text"
+      />
       <SearchButtons
         handleNext={handleNext}
         handlePrevious={handlePrevious}
       />
-      <input placeholder="Enter filter text"  />
+       
+
       <table>
         <thead>
           <tr>

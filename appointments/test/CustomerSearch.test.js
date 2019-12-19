@@ -182,4 +182,12 @@ describe('CustomerSearch', () => {
       'Enter filter text'
     );
   });
+  it('performs search when search term is changed', async () => {
+    await renderAndWait(<CustomerSearch />);
+    await changeAndWait(element('input'), withEvent('input', 'robert1'));
+    expect(window.fetch).toHaveBeenLastCalledWith(
+      '/customers?searchTerm=robert1',
+      expect.anything()
+    );
+  });
 });
