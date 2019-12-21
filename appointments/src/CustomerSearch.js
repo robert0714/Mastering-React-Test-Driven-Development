@@ -26,43 +26,45 @@ const request = {
     'Content-Type': 'application/json'
   }
 };
+const searchParams = (after, searchTerm) => {
+  let pairs =[] ;
+  if(after){
+    pairs.push(`after=${after}`);
+  }
+  if(searchTerm !== ''){
+    pairs.push(`searchTerm=${searchTerm}`);
+  }
+  if(pairs.length > 0){
+    return `?${pairs.join('&')}`;
+  }
+  return '';  
+};
 export const CustomerSearch = () => {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [queryStrings, setQueryStrings] = useState([]);
-  const [previousQueryString, setPreviousQueryString] = useState(
-    ''
-  );
+  const [lastRowIds, setLastRowIds] = useState([]);
+
   const handleSearchTextChanged = ({ target: { value } }) =>
     setSearchTerm(value);
 
-  const handleNext = useCallback(
-    async queryString => {
-      const after = customers[customers.length - 1].id;
-      const newQueryString = `/customers?after=${after}`;
-      setPreviousQueryString(queryString);
-      setQueryStrings([...queryStrings, newQueryString]);
-      const result = await window.fetch(newQueryString, request);
-      setCustomers(await result.json());
-    },
-    [customers, queryStrings]
-  );
+  const handleNext = useCallback(() => {
+    const currentLastRowId = customers[customers.length - 1].id;
+    setLastRowIds([...lastRowIds, currentLastRowId]);    
+  }, [customers, lastRowIds]);
 
   const handlePrevious = useCallback(() => {
-    setQueryStrings(queryStrings.slice(0, -1));
-  }, [queryStrings]);
+    setLastRowIds(lastRowIds.slice(0, -1));
+  }, [lastRowIds]);
 
   useEffect(() => {
     const fetchData = async () => {
-      let queryString = '';
-
-      if (queryStrings.length > 0 && searchTerm !== '') {
-        queryString = queryStrings[queryStrings.length - 1] +'&searchTerm='+searchTerm;
-      } else if (searchTerm !== '') {
-        queryString = `?searchTerm=${searchTerm}`;
-      } else if (queryStrings.length > 0) {
-        queryString = queryStrings[queryStrings.length - 1];
+      let after ;
+      if(lastRowIds.length >0){
+        after =lastRowIds[lastRowIds.length -1 ];
       }
+      const queryString =searchParams(after ,searchTerm);
+
+       
       const result = await window.fetch(
         `/customers${queryString}`,
         request
@@ -70,7 +72,7 @@ export const CustomerSearch = () => {
       setCustomers(await result.json());
     };
     fetchData();
-  }, [queryStrings, searchTerm]);
+  }, [lastRowIds, searchTerm]);
   return (
     <React.Fragment>
       <input

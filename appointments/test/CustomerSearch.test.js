@@ -196,14 +196,10 @@ describe('CustomerSearch', () => {
   it('includes search term when moving to next page', async () => {
     window.fetch.mockReturnValue(fetchResponseOk(tenCustomers));
     await renderAndWait(<CustomerSearch />);
-    await changeAndWait(
-      element('input'),
-      withEvent('input', 'pamela')
-    );
+    await changeAndWait(element('input'), withEvent('input', 'pamela'));
     await clickAndWait(element('button#next-page'));
-    
     expect(window.fetch).toHaveBeenLastCalledWith(
-      '/customers/customers?after=9&searchTerm=pamela',
+      '/customers?after=9&searchTerm=pamela',
       expect.anything()
     );
   });
