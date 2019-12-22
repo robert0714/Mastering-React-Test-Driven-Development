@@ -104,7 +104,15 @@ describe('App', () => {
       elementMatching(type(AppointmentsDayViewLoader))
     ).toBeDefined();
   });
+  const searchCustomers = () => {
+    render(<App />);
+    click(elementMatching(id('searchCustomers')));
+  };
 
+  it('displays the CustomerSearch when button is clicked', async () => {
+    searchCustomers();
+    expect(elementMatching(type(CustomerSearch))).toBeDefined();
+  });
   const renderSearchActionsForCustomer = customer => {
     searchCustomers();
     const customerSearch = elementMatching(type(CustomerSearch));
@@ -112,8 +120,10 @@ describe('App', () => {
       customerSearch.props.renderCustomerActions;
     return SearchActionComponent(customer);
   };
-  it.skip('passes a button to the CustomerSearch named Create appointment', async () => {
-    const button = childrenOf(renderSearchActionsForCustomer())[0];
+  it('passes a button to the CustomerSearch named Create appointment', async () => {
+    const button = childrenOf(
+      renderSearchActionsForCustomer()
+    )[0];
     expect(button).toBeDefined();
     expect(button.type).toEqual('button');
     expect(button.props.role).toEqual('button');
