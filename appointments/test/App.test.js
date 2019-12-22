@@ -11,6 +11,7 @@ import { App } from '../src/App';
 import { AppointmentFormLoader } from '../src/AppointmentFormLoader';
 import { AppointmentsDayViewLoader } from '../src/AppointmentsDayViewLoader';
 import { CustomerForm } from '../src/CustomerForm';
+import { CustomerSearch } from '../src/CustomerSearch';
 
 describe('App', () => {
   let render, elementMatching, child;
@@ -102,5 +103,20 @@ describe('App', () => {
     expect(
       elementMatching(type(AppointmentsDayViewLoader))
     ).toBeDefined();
+  });
+
+  const renderSearchActionsForCustomer = customer => {
+    searchCustomers();
+    const customerSearch = elementMatching(type(CustomerSearch));
+    const SearchActionComponent =
+      customerSearch.props.renderCustomerActions;
+    return SearchActionComponent(customer);
+  };
+  it.skip('passes a button to the CustomerSearch named Create appointment', async () => {
+    const button = childrenOf(renderSearchActionsForCustomer())[0];
+    expect(button).toBeDefined();
+    expect(button.type).toEqual('button');
+    expect(button.props.role).toEqual('button');
+    expect(button.props.children).toEqual('Create appointment');
   });
 });

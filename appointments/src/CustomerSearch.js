@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-const CustomerRow = ({ customer }) => (
+const CustomerRow = ({ customer ,renderCustomerActions}) => (
   <tr>
     <td>{customer.firstName}</td>
     <td>{customer.lastName}</td>
     <td>{customer.phoneNumber}</td>
+    <td>{renderCustomerActions(customer)}</td>
   </tr>
 );
 const SearchButtons = ({ handleNext, handlePrevious }) => (
@@ -27,19 +28,19 @@ const request = {
   }
 };
 const searchParams = (after, searchTerm) => {
-  let pairs =[] ;
-  if(after){
+  let pairs = [];
+  if (after) {
     pairs.push(`after=${after}`);
   }
-  if(searchTerm !== ''){
+  if (searchTerm !== '') {
     pairs.push(`searchTerm=${searchTerm}`);
   }
-  if(pairs.length > 0){
+  if (pairs.length > 0) {
     return `?${pairs.join('&')}`;
   }
-  return '';  
+  return '';
 };
-export const CustomerSearch = () => {
+export const CustomerSearch = ({renderCustomerActions}) => {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [lastRowIds, setLastRowIds] = useState([]);
@@ -49,7 +50,7 @@ export const CustomerSearch = () => {
 
   const handleNext = useCallback(() => {
     const currentLastRowId = customers[customers.length - 1].id;
-    setLastRowIds([...lastRowIds, currentLastRowId]);    
+    setLastRowIds([...lastRowIds, currentLastRowId]);
   }, [customers, lastRowIds]);
 
   const handlePrevious = useCallback(() => {
@@ -58,13 +59,12 @@ export const CustomerSearch = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      let after ;
-      if(lastRowIds.length >0){
-        after =lastRowIds[lastRowIds.length -1 ];
+      let after;
+      if (lastRowIds.length > 0) {
+        after = lastRowIds[lastRowIds.length - 1];
       }
-      const queryString =searchParams(after ,searchTerm);
+      const queryString = searchParams(after, searchTerm);
 
-       
       const result = await window.fetch(
         `/customers${queryString}`,
         request
@@ -100,6 +100,7 @@ export const CustomerSearch = () => {
                 <CustomerRow
                   customer={customer}
                   key={customer.id}
+                  renderCustomerActions ={renderCustomerActions}
                 />
               ))
             : null}
@@ -107,4 +108,8 @@ export const CustomerSearch = () => {
       </table>
     </React.Fragment>
   );
+};
+
+CustomerSearch.defaultProps = {
+  renderCustomerActions: () => {}
 };
