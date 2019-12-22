@@ -20,9 +20,9 @@ export const App = () => {
   const transitionToDayView = useCallback(() => {
     setView('dayView');
   }, []);
-  const searchActions = () => (
+  const searchActions = (customer) => (
     <React.Fragment>
-      <button role="button">Create appointment</button>
+      <button role="button" onClick={()=>{transitionToAddAppointment(customer)}}>Create appointment</button>
     </React.Fragment>
   );
   switch (view) {
